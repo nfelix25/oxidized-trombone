@@ -62,6 +62,39 @@ function validateValidFixtures() {
     }
   }
 
+  // Live-sequence fixtures: schema_version field determines schema
+  const SCHEMA_VERSION_MAP = {
+    lesson_plan_v1: "lesson_plan_v1",
+    exercise_pack_v1: "exercise_pack_v1",
+    hint_pack_v1: "hint_pack_v1",
+    review_report_v1: "review_report_v1"
+  };
+  const liveSeqDir = path.join(ROOT, "valid", "live_sequence");
+  for (const file of collectJsonFiles(liveSeqDir)) {
+    const payload = loadJson(file);
+    const schemaName = SCHEMA_VERSION_MAP[payload.schema_version];
+    if (!schemaName) {
+      results.push({ file, ok: false, rule: "unknown_schema", reason: `Unknown schema_version: ${payload.schema_version}` });
+      continue;
+    }
+    const schemaResult = validateRoleOutput(schemaName, payload);
+    const policyResult = evaluatePolicy({ schemaName, payload, packet: {} });
+    results.push({
+      file,
+      ok: schemaResult.ok && policyResult.ok,
+      reason: !schemaResult.ok
+        ? schemaResult.errors.join("; ")
+        : !policyResult.ok
+          ? policyResult.violations.map((v) => v.reason).join("; ")
+          : "ok",
+      rule: !schemaResult.ok
+        ? "schema_validation"
+        : !policyResult.ok
+          ? policyResult.violations[0]?.rule
+          : null
+    });
+  }
+
   return results;
 }
 

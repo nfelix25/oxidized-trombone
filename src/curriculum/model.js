@@ -51,3 +51,38 @@ export function unmetPrerequisites(graph, nodeId, masteryByNode = {}) {
   const node = getNode(graph, nodeId);
   return node.prerequisites.filter((prereqId) => (masteryByNode[prereqId] ?? 0) < 2);
 }
+
+export function validateCurriculumGraph(graph) {
+  const errors = [];
+  const knownIds = new Set(graph.nodes.map((n) => n.id));
+
+  for (const node of graph.nodes) {
+    if (!node.misconceptionTags || node.misconceptionTags.length === 0) {
+      errors.push(`${node.id}: missing misconception tags`);
+    }
+    for (const prereq of node.prerequisites) {
+      if (!knownIds.has(prereq)) {
+        errors.push(`${node.id}: unknown prerequisite ${prereq}`);
+      }
+    }
+    if (!node.depthTarget) {
+      errors.push(`${node.id}: missing depthTarget`);
+    }
+    if (!node.track) {
+      errors.push(`${node.id}: missing track`);
+    }
+  }
+
+  for (const [trackId, track] of Object.entries(graph.tracks)) {
+    for (const nodeId of track.nodeIds) {
+      if (!knownIds.has(nodeId)) {
+        errors.push(`Track ${trackId}: references unknown node ${nodeId}`);
+      }
+    }
+  }
+
+  return {
+    ok: errors.length === 0,
+    errors
+  };
+}

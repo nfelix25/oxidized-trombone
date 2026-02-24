@@ -34,3 +34,16 @@ export function runCommand(command, args = [], options = {}) {
 export function runCargoTest(cwd) {
   return runCommand("cargo", ["test", "-q"], { cwd });
 }
+
+export async function runExercise(workspaceDir) {
+  const result = await runCargoTest(workspaceDir);
+  return {
+    workspaceDir,
+    command: result.command,
+    exitCode: result.code,
+    ok: result.ok,
+    stdout: result.stdout,
+    stderr: result.stderr,
+    ranAt: new Date().toISOString()
+  };
+}

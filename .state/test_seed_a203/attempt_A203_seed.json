@@ -6,12 +6,16 @@
   "history": [
     {
       "attemptIndex": 1,
-      "code": 1,
+      "exitCode": 1,
+      "ok": false,
       "stdout": "",
       "stderr": "error[E0499]: cannot borrow as mutable\n",
-      "elapsedMinutes": 8
+      "command": "node -e console.error('error[E0499]: cannot borrow as mutable'); process.exit(1)",
+      "elapsedMinutes": 8,
+      "at": "2026-02-24T04:26:31.527Z"
     }
   ],
+  "reviews": [],
   "latestReview": {
     "passFail": "FAIL",
     "score": 62,

@@ -17,33 +17,39 @@ export async function persistReviewOutcome(storage, attemptState, reviewPayload)
 }
 
 export function extractAttemptEvidence(runResult) {
-  const compilerErrors = [];
-  const failingTests = [];
+  const stderrLines = (runResult.stderr ?? "").split("\n").filter(Boolean);
+  const stdoutLines = (runResult.stdout ?? "").split("\n").filter(Boolean);
 
-  const stderrLines = runResult.stderr.split("\n").filter(Boolean);
-  for (const line of stderrLines) {
-    if (line.includes("error[E")) {
-      compilerErrors.push(line.trim());
-    }
-    if (line.includes("FAILED")) {
-      failingTests.push(line.trim());
-    }
-  }
+  const compilerErrorLines = stderrLines.filter((line) => line.includes("error[E"));
+  const errorCodes = compilerErrorLines
+    .map((line) => {
+      const match = line.match(/error\[(E\d+)\]/);
+      return match?.[1];
+    })
+    .filter(Boolean);
+
+  const failingTests = stderrLines
+    .concat(stdoutLines)
+    .filter((line) => line.includes("FAILED") || line.match(/^test .+ \.\.\. FAILED/));
+
+  const passingTests = stdoutLines
+    .filter((line) => line.match(/^test .+ \.\.\. ok/))
+    .map((line) => {
+      const m = line.match(/^test (.+?) \.\.\. ok/);
+      return m?.[1] ?? line;
+    });
+
+  const excerptLines = stderrLines.length > 0 ? stderrLines : stdoutLines;
 
   return {
     compiler: {
-      error_codes: compilerErrors
-        .map((line) => {
-          const match = line.match(/error\[(E\d+)\]/);
-          return match?.[1];
-        })
-        .filter(Boolean),
-      error_excerpt: stderrLines.slice(0, 5).join("\n")
+      error_codes: [...new Set(errorCodes)],
+      error_excerpt: excerptLines.slice(0, 8).join("\n")
     },
     tests: {
-      passing: runResult.ok ? ["all"] : [],
+      passing: runResult.ok ? (passingTests.length > 0 ? passingTests : ["all"]) : passingTests,
       failing: failingTests,
-      failure_excerpt: stderrLines.slice(0, 5).join("\n")
+      failure_excerpt: excerptLines.slice(0, 8).join("\n")
     }
   };
 }

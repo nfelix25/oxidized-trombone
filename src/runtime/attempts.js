@@ -4,28 +4,31 @@ export function createAttemptState(exerciseId) {
     attemptIndex: 0,
     hintLevelUsed: 0,
     elapsedMinutes: 0,
-    history: []
+    history: [],
+    reviews: []
   };
 }
 
 export function recordAttempt(state, runResult, elapsedMinutes) {
-  const next = {
+  const attemptIndex = state.attemptIndex + 1;
+  return {
     ...state,
-    attemptIndex: state.attemptIndex + 1,
+    attemptIndex,
     elapsedMinutes,
     history: [
       ...state.history,
       {
-        attemptIndex: state.attemptIndex + 1,
-        code: runResult.code,
+        attemptIndex,
+        exitCode: runResult.exitCode ?? runResult.code,
+        ok: runResult.ok,
         stdout: runResult.stdout,
         stderr: runResult.stderr,
-        elapsedMinutes
+        command: runResult.command ?? null,
+        elapsedMinutes,
+        at: new Date().toISOString()
       }
     ]
   };
-
-  return next;
 }
 
 export function recordHintUsage(state, hintLevel) {
@@ -33,4 +36,31 @@ export function recordHintUsage(state, hintLevel) {
     ...state,
     hintLevelUsed: Math.max(state.hintLevelUsed, hintLevel)
   };
+}
+
+export function recordReviewOutcome(state, reviewPayload) {
+  return {
+    ...state,
+    reviews: [
+      ...state.reviews,
+      {
+        attemptIndex: state.attemptIndex,
+        passFail: reviewPayload.pass_fail,
+        score: reviewPayload.score,
+        dominantTag: reviewPayload.dominant_tag,
+        remediation: reviewPayload.remediation,
+        at: new Date().toISOString()
+      }
+    ],
+    latestReview: {
+      passFail: reviewPayload.pass_fail,
+      score: reviewPayload.score,
+      dominantTag: reviewPayload.dominant_tag,
+      remediation: reviewPayload.remediation
+    }
+  };
+}
+
+export function getLatestRunResult(state) {
+  return state.history[state.history.length - 1] ?? null;
 }

@@ -1,0 +1,14 @@
+{
+  "schema_version": "hint_pack_v1",
+  "role": "coach",
+  "hint_id": "hp_a200_d2_live",
+  "exercise_id": "ex_a200_d2_live",
+  "node_id": "A200",
+  "depth_target": "D2",
+  "attempt_index": 1,
+  "hint_level": 1,
+  "dominant_tag": "own.move.after_move_use",
+  "allowed_reveal": false,
+  "current_hint": {"style": "nudge", "text": "Remember that in Rust, when you pass a String to a function, ownership moves into the function. To return it, simply return the value from the function body."},
+  "full_solution_provided": false
+}

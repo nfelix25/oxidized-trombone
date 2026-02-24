@@ -59,3 +59,17 @@ export function mapCustomTopic(graph, topic, masteryByNode = {}) {
 export function prerequisiteGapReport(mapping) {
   return mapping.prerequisiteGaps.filter((entry) => entry.missingPrerequisites.length > 0);
 }
+
+export function getEligibleByTrack(graph, trackId, masteryByNode = {}) {
+  const narrowed = narrowTrack(graph, trackId, masteryByNode);
+  return narrowed.filter((node) => node.eligible);
+}
+
+export function getTracksWithEligibleNodes(graph, masteryByNode = {}) {
+  return Object.values(graph.tracks)
+    .map((track) => {
+      const eligible = getEligibleByTrack(graph, track.id, masteryByNode);
+      return { track, eligibleCount: eligible.length };
+    })
+    .filter((entry) => entry.eligibleCount > 0);
+}

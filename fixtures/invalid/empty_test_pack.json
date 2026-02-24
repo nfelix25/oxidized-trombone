@@ -1,0 +1,17 @@
+{
+  "schemaName": "exercise_pack_v1",
+  "packet": {},
+  "payload": {
+    "schema_version": "exercise_pack_v1",
+    "role": "author",
+    "exercise_id": "ex_bad_no_run_cmds",
+    "node_id": "A200",
+    "depth_target": "D1",
+    "objective": "Exercise with empty run commands",
+    "starter_files": [{"path": "src/lib.rs", "content": "pub fn f() {}"}],
+    "test_files": [{"path": "tests/t.rs", "content": "#[test] fn t() { assert!(true); }"}],
+    "run_instructions": {"commands": []},
+    "hint_policy": {"max_hint_level": 2, "reveal_allowed_before_threshold": false}
+  },
+  "expectedRule": "non_empty_run_instructions"
+}

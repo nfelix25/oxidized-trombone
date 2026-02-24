@@ -1,0 +1,23 @@
+{
+  "schemaName": "hint_pack_v1",
+  "packet": {
+    "policy_context": {"max_attempts_before_reveal": 4},
+    "attempt_context": {"attempt_index": 1, "user_requested_reveal": false}
+  },
+  "payload": {
+    "schema_version": "hint_pack_v1",
+    "role": "coach",
+    "hint_id": "hp_early_reveal",
+    "exercise_id": "ex_a200_d2",
+    "node_id": "A200",
+    "depth_target": "D2",
+    "attempt_index": 1,
+    "hint_level": 3,
+    "dominant_tag": "own.move.after_move_use",
+    "allowed_reveal": true,
+    "current_hint": {"style": "full", "text": "Here is the full solution"},
+    "full_solution_provided": true,
+    "revealed_solution": {"code": "pub fn take_and_return(s: String) -> String { s }"}
+  },
+  "expectedRule": "respect_attempt_threshold"
+}

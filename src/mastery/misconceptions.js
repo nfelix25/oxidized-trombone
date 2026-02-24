@@ -6,6 +6,16 @@ export function createMisconceptionState() {
 }
 
 export function recordMisconception(state, { nodeId, tag, attemptIndex }) {
+  if (!nodeId || typeof nodeId !== "string") {
+    throw new Error("recordMisconception: nodeId is required");
+  }
+  if (!tag || typeof tag !== "string") {
+    throw new Error("recordMisconception: tag is required");
+  }
+  if (attemptIndex === undefined || attemptIndex === null) {
+    throw new Error("recordMisconception: attemptIndex is required");
+  }
+
   const attempts = [
     ...state.attempts,
     {

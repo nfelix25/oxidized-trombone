@@ -10,11 +10,28 @@ async function writeFiles(rootDir, files) {
 }
 
 export async function materializeExercise(rootDir, exercisePack) {
-  await writeFiles(rootDir, exercisePack.starter_files ?? []);
-  await writeFiles(rootDir, exercisePack.test_files ?? []);
+  if (!exercisePack) {
+    throw new Error("materializeExercise requires an exercisePack");
+  }
+
+  const starterFiles = exercisePack.starter_files ?? [];
+  const testFiles = exercisePack.test_files ?? [];
+
+  if (starterFiles.length === 0 && testFiles.length === 0) {
+    throw new Error("materializeExercise: exercisePack has no starter or test files (empty test pack)");
+  }
+
+  await fs.mkdir(rootDir, { recursive: true });
+  await writeFiles(rootDir, starterFiles);
+  await writeFiles(rootDir, testFiles);
+
   return {
     rootDir,
-    starterCount: exercisePack.starter_files?.length ?? 0,
-    testCount: exercisePack.test_files?.length ?? 0
+    starterCount: starterFiles.length,
+    testCount: testFiles.length,
+    materializedPaths: [
+      ...starterFiles.map((f) => path.join(rootDir, f.path)),
+      ...testFiles.map((f) => path.join(rootDir, f.path))
+    ]
   };
 }

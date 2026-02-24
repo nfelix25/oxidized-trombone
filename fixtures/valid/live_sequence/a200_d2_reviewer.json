@@ -1,0 +1,13 @@
+{
+  "schema_version": "review_report_v1",
+  "role": "reviewer",
+  "report_id": "rr_a200_d2_live",
+  "exercise_id": "ex_a200_d2_live",
+  "node_id": "A200",
+  "depth_target": "D2",
+  "attempt_index": 1,
+  "pass_fail": "PASS",
+  "score": 85,
+  "dominant_tag": null,
+  "remediation": {"action": "advance_next", "reason": "Learner correctly returned ownership from function"}
+}
