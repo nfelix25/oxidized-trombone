@@ -1,0 +1,12 @@
+{
+  "schema_version": "lesson_plan_v1",
+  "role": "planner",
+  "plan_id": "lp_a203_d1",
+  "node_id": "A203",
+  "depth_target": "D1",
+  "objective": "Explain mutable aliasing constraints",
+  "misconception_focus": ["borrow.two_mut_refs"],
+  "lesson_outline": [{"step": 1, "title": "alias model"}],
+  "assessment_plan": {"assessment_type": "concept_check"},
+  "next_action": "generate_exercise"
+}

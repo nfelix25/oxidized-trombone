@@ -1,0 +1,14 @@
+{
+  "schema_version": "context_packet_v1",
+  "packet_id": "a203-d2",
+  "timestamp_utc": "2026-02-23T20:05:00Z",
+  "role": "coach",
+  "task_type": "give_hint",
+  "learner_profile": {"learner_id": "personal-user"},
+  "curriculum_context": {"node_id": "A203", "depth_target": "D2"},
+  "misconception_context": {"top_node_tags": ["borrow.two_mut_refs"]},
+  "attempt_context": {"attempt_index": 2},
+  "evidence_context": {"tests": {"failing": ["test_no_simultaneous_mut_alias"]}},
+  "policy_context": {"max_attempts_before_reveal": 4},
+  "output_contract": {"schema_name": "hint_pack_v1"}
+}

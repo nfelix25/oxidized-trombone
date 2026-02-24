@@ -1,0 +1,17 @@
+{
+  "schemaName": "lesson_plan_v1",
+  "packet": {},
+  "payload": {
+    "schema_version": "lesson_plan_v1",
+    "role": "planner",
+    "plan_id": "bad",
+    "node_id": "A203",
+    "depth_target": "D1",
+    "objective": "test",
+    "misconception_focus": ["borrow.two_mut_refs"],
+    "lesson_outline": [{"step": 1}],
+    "assessment_plan": {"assessment_type": "concept_check"},
+    "next_action": "generate_exercise",
+    "extra": true
+  }
+}

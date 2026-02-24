@@ -1,0 +1,24 @@
+{
+  "exerciseId": "A203_seed",
+  "attemptIndex": 1,
+  "hintLevelUsed": 1,
+  "elapsedMinutes": 8,
+  "history": [
+    {
+      "attemptIndex": 1,
+      "code": 1,
+      "stdout": "",
+      "stderr": "error[E0499]: cannot borrow as mutable\n",
+      "elapsedMinutes": 8
+    }
+  ],
+  "latestReview": {
+    "passFail": "FAIL",
+    "score": 62,
+    "dominantTag": "borrow.two_mut_refs",
+    "remediation": {
+      "action": "retry_same",
+      "reason": "Overlapping mutable references"
+    }
+  }
+}

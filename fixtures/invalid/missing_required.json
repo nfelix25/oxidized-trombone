@@ -1,0 +1,9 @@
+{
+  "schemaName": "exercise_pack_v1",
+  "packet": {},
+  "payload": {
+    "schema_version": "exercise_pack_v1",
+    "role": "author",
+    "exercise_id": "bad"
+  }
+}

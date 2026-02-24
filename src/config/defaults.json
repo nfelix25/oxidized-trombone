@@ -1,0 +1,9 @@
+{
+  "strictness": 75,
+  "frustrationThreshold": 65,
+  "sessionLengthTargetMin": 25,
+  "maxAttemptsBeforeReveal": 4,
+  "allowFullSolutionBeforeThreshold": false,
+  "hintLevels": [1, 2, 3],
+  "packetMode": "standard"
+}

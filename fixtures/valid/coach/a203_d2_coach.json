@@ -1,0 +1,14 @@
+{
+  "schema_version": "hint_pack_v1",
+  "role": "coach",
+  "hint_id": "hp_a203_d2",
+  "exercise_id": "ex_a203_d2",
+  "node_id": "A203",
+  "depth_target": "D2",
+  "attempt_index": 2,
+  "hint_level": 2,
+  "dominant_tag": "borrow.two_mut_refs",
+  "allowed_reveal": false,
+  "current_hint": {"style": "directive", "text": "Shorten mutable borrow scope"},
+  "full_solution_provided": false
+}

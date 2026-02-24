@@ -1,0 +1,23 @@
+{
+  "schemaName": "hint_pack_v1",
+  "packet": {
+    "policy_context": {"max_attempts_before_reveal": 4},
+    "attempt_context": {"attempt_index": 2, "user_requested_reveal": false}
+  },
+  "payload": {
+    "schema_version": "hint_pack_v1",
+    "role": "coach",
+    "hint_id": "bad_hint",
+    "exercise_id": "ex_a203_d2",
+    "node_id": "A203",
+    "depth_target": "D2",
+    "attempt_index": 2,
+    "hint_level": 2,
+    "dominant_tag": "borrow.two_mut_refs",
+    "allowed_reveal": false,
+    "current_hint": {"style": "directive", "text": "full solution incoming"},
+    "full_solution_provided": true,
+    "revealed_solution": {"code": "pub fn answer() {}"}
+  },
+  "expectedRule": "no_early_reveal"
+}

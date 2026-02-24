@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hint_pack_v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "role",
+    "hint_id",
+    "exercise_id",
+    "node_id",
+    "depth_target",
+    "attempt_index",
+    "hint_level",
+    "dominant_tag",
+    "allowed_reveal",
+    "current_hint",
+    "full_solution_provided"
+  ],
+  "properties": {
+    "schema_version": { "const": "hint_pack_v1" },
+    "role": { "const": "coach" },
+    "hint_id": { "type": "string" },
+    "exercise_id": { "type": "string" },
+    "node_id": { "type": "string" },
+    "depth_target": { "type": "string", "enum": ["D1", "D2", "D3"] },
+    "attempt_index": { "type": "integer", "minimum": 1 },
+    "hint_level": { "type": "integer", "enum": [1, 2, 3] },
+    "dominant_tag": { "type": "string" },
+    "allowed_reveal": { "type": "boolean" },
+    "current_hint": { "type": "object" },
+    "full_solution_provided": { "type": "boolean" },
+    "revealed_solution": { "type": "object" }
+  }
+}

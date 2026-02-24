@@ -1,0 +1,11 @@
+{
+  "name": "personal-rust-learning-with-codex",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "test:fixtures": "node src/fixtures/harness.js",
+    "seed:a203": "node src/seed/a203Flow.js"
+  }
+}

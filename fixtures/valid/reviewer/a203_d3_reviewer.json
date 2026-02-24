@@ -1,0 +1,13 @@
+{
+  "schema_version": "review_report_v1",
+  "role": "reviewer",
+  "report_id": "rr_a203_d3",
+  "exercise_id": "ex_a203_d3",
+  "node_id": "A203",
+  "depth_target": "D3",
+  "attempt_index": 2,
+  "pass_fail": "PASS",
+  "score": 90,
+  "dominant_tag": null,
+  "remediation": {"action": "advance_next", "reason": "Transfer objective met"}
+}
