@@ -15,6 +15,10 @@ The system SHALL register `cpp` as a supported language in the language registry
 - **WHEN** a C++ session exercise is set up
 - **THEN** the workspace contains a valid `CMakeLists.txt`, a `src/solution.cpp` stub, and a `tests/` directory
 
+#### Scenario: C++ curriculum includes advanced browser-internals tracks
+- **WHEN** a learner selects C++
+- **THEN** `getCurriculumForLanguage("cpp")` returns all C++ nodes including both the core language tracks (CF/CP/CM/CV/CS/CT/CK/CE/CO/CC/CW/CB) and the Chromium browser-internals tracks (BF/BL/BV/BN/BA/BP), totaling the full combined node count
+
 ---
 
 ### Requirement: Language Foundations track (CF) provides core C++ syntax

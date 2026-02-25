@@ -47,9 +47,9 @@
 
 ## 7. Integration & Smoke Test
 
-- [ ] 7.1 Manually run `npm run session start -- --debug` after selecting a C node; confirm workspace contains Makefile and tests/test.h
-- [ ] 7.2 Confirm scaffold output for a C node contains C-specific keywords (POSIX function names, C types) and correct intent counts for the depth target
-- [ ] 7.3 Confirm starter sections have `.c` file extensions and no Rust syntax
-- [ ] 7.4 Confirm test sections use `#include "test.h"` and `RUN_TEST`/`TEST_SUMMARY`
-- [ ] 7.5 Compile a generated C workspace manually with `make test` and confirm it compiles and runs (even with todo stubs returning 0)
+- [x] 7.1 Manually run `npm run session start -- --debug` after selecting a C node; confirm workspace contains Makefile and tests/test.h
+- [x] 7.2 Confirm scaffold output for a C node contains C-specific keywords (POSIX function names, C types) and correct intent counts for the depth target
+- [x] 7.3 Confirm starter sections have `.c` file extensions and no Rust syntax
+- [x] 7.4 Confirm test sections use `#include "test.h"` and `RUN_TEST`/`TEST_SUMMARY`
+- [x] 7.5 Compile a generated C workspace manually with `make test` and confirm it compiles and runs (even with todo stubs returning 0)
 - [x] 7.6 Update README to mention C language support and the `make test` command

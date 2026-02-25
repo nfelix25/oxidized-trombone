@@ -4,10 +4,13 @@ import { cCurriculum } from "./cSeed.js";
 import { zigCurriculum } from "./zigSeed.js";
 import { pythonCurriculum } from "./pythonSeed.js";
 import { cppCurriculum } from "./cppSeed.js";
+import { jsCurriculum } from "./jsSeed.js";
+import { browserCurriculum } from "./browserSeed.js";
+import { rustToolchainCurriculum } from "./rustToolchainSeed.js";
 
 export const allCurricula = createCurriculumGraph(
-  [...seedCurriculum.nodes, ...cCurriculum.nodes, ...zigCurriculum.nodes, ...pythonCurriculum.nodes, ...cppCurriculum.nodes],
-  { ...seedCurriculum.tracks, ...cCurriculum.tracks, ...zigCurriculum.tracks, ...pythonCurriculum.tracks, ...cppCurriculum.tracks }
+  [...seedCurriculum.nodes, ...cCurriculum.nodes, ...zigCurriculum.nodes, ...pythonCurriculum.nodes, ...cppCurriculum.nodes, ...jsCurriculum.nodes, ...browserCurriculum.nodes, ...rustToolchainCurriculum.nodes],
+  { ...seedCurriculum.tracks, ...cCurriculum.tracks, ...zigCurriculum.tracks, ...pythonCurriculum.tracks, ...cppCurriculum.tracks, ...jsCurriculum.tracks, ...browserCurriculum.tracks, ...rustToolchainCurriculum.tracks }
 );
 
 export function getCurriculumForLanguage(lang) {

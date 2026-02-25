@@ -62,11 +62,13 @@ test("getCurriculumForLanguage: CF01 has no prerequisites", () => {
 
 test("getCurriculumForLanguage: cpp curriculum has the expected number of nodes", () => {
   const graph = getCurriculumForLanguage("cpp");
-  // 12 tracks: CF(10)+CP(9)+CM(8)+CV(7)+CS(9)+CT(8)+CK(7)+CE(6)+CO(5)+CC(8)+CW(6)+CB(7) = 90
+  // C++ core: CF(10)+CP(9)+CM(8)+CV(7)+CS(9)+CT(8)+CK(7)+CE(6)+CO(5)+CC(8)+CW(6)+CB(7) = 90
+  // Browser:  BF(8)+BL(10)+BV(7)+BN(8)+BA(8)+BP(7) = 48
+  // Total: 90 + 48 = 138
   assert.equal(
     graph.nodes.length,
-    90,
-    `Expected 90 cpp nodes, got ${graph.nodes.length}`
+    138,
+    `Expected 138 cpp nodes, got ${graph.nodes.length}`
   );
 });
 
