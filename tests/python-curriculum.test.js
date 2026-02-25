@@ -56,11 +56,11 @@ test("getCurriculumForLanguage: PF01 has no prerequisites", () => {
 
 test("getCurriculumForLanguage: python curriculum has the expected number of nodes", () => {
   const graph = getCurriculumForLanguage("python");
-  // 13 tracks: PF(10)+PD(8)+PO(9)+PI(6)+PE(6)+PT(7)+PM(5)+PA(8)+PX(5)+PS(7)+PK(6)+PB(5)+PH(5) = 87
+  // 13 tracks: PF(10)+PD(8)+PO(9)+PI(6)+PE(6)+PT(7)+PM(5)+PA(8)+PX(5)+PS(7)+PK(6)+PB(5)+PH(5) = 94
   assert.equal(
     graph.nodes.length,
-    87,
-    `Expected 87 python nodes, got ${graph.nodes.length}`
+    94,
+    `Expected 94 python nodes, got ${graph.nodes.length}`
   );
 });
 

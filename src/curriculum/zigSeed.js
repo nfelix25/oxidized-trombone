@@ -315,12 +315,32 @@ const zigArraysStringsNodes = [
   }),
   createNode({
     id: "ZA03",
-    title: "std.mem utilities: copy, eql, indexOf, sort, and reverse",
+    title: "std.mem copy and equality: mem.copy, mem.eql, and the dest/src length invariant",
     track: "zig-arrays-strings",
     depthTarget: "D2",
     prerequisites: ["ZA02"],
-    misconceptionTags: ["zig.mem_copy_noalias", "zig.mem_sort_comparison_fn"],
-    keywords: ["std.mem.copy", "std.mem.eql", "std.mem.indexOf", "std.mem.sort", "std.mem.reverse", "std.mem.startsWith", "std.mem.endsWith", "std.mem.indexOfScalar"],
+    misconceptionTags: ["zig.mem_copy_noalias"],
+    keywords: ["std.mem.copy", "std.mem.eql", "std.mem.copyForwards", "dest/src length", "slice comparison", "byte copy", "equality check"],
+    language: "zig"
+  }),
+  createNode({
+    id: "ZA03b",
+    title: "std.mem search: indexOf, indexOfScalar, startsWith, and endsWith",
+    track: "zig-arrays-strings",
+    depthTarget: "D2",
+    prerequisites: ["ZA03"],
+    misconceptionTags: ["zig.mem_indexof_null_return"],
+    keywords: ["std.mem.indexOf", "std.mem.indexOfScalar", "std.mem.startsWith", "std.mem.endsWith", "optional return", "search pattern", "null sentinel search"],
+    language: "zig"
+  }),
+  createNode({
+    id: "ZA03c",
+    title: "std.mem sort and reverse: in-place reordering with comparators",
+    track: "zig-arrays-strings",
+    depthTarget: "D2",
+    prerequisites: ["ZA03b"],
+    misconceptionTags: ["zig.mem_sort_comparison_fn"],
+    keywords: ["std.mem.sort", "std.mem.reverse", "lessThan comparator", "context parameter", "sort key", "in-place sort", "custom ordering"],
     language: "zig"
   }),
   createNode({

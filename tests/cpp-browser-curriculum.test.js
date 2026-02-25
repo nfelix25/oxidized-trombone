@@ -156,14 +156,14 @@ test("all browser curriculum prerequisite IDs resolve in allCurricula", () => {
 // getCurriculumForLanguage("cpp") includes both core and browser nodes
 // ---------------------------------------------------------------------------
 
-test("getCurriculumForLanguage('cpp') returns core + browser nodes (138 total)", () => {
+test("getCurriculumForLanguage('cpp') returns core + browser nodes (143 total)", () => {
   const graph = getCurriculumForLanguage("cpp");
   // C++ core: CF(10)+CP(9)+CM(8)+CV(7)+CS(9)+CT(8)+CK(7)+CE(6)+CO(5)+CC(8)+CW(6)+CB(7) = 90
   // Browser:  BF(8)+BL(10)+BV(7)+BN(8)+BA(8)+BP(7) = 48
-  // Total: 138
+  // Total: 143 (updated)
   assert.equal(
     graph.nodes.length,
-    138,
-    `Expected 138 cpp nodes (core + browser), got ${graph.nodes.length}`
+    143,
+    `Expected 143 cpp nodes (core + browser), got ${graph.nodes.length}`
   );
 });

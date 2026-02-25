@@ -5,13 +5,23 @@ import { createCurriculumGraph, createNode } from "./model.js";
 // ---------------------------------------------------------------------------
 const cPointersNodes = [
   createNode({
-    id: "C200",
-    title: "Pointer arithmetic, decay, restrict, and const-correctness",
+    id: "C200a",
+    title: "Pointer arithmetic and array decay",
     track: "c-pointers",
     depthTarget: "D2",
     prerequisites: [],
-    misconceptionTags: ["c.ptr_arithmetic_ub", "c.array_decay_confusion", "c.const_ptr_confusion"],
-    keywords: ["pointer", "pointer arithmetic", "array decay", "restrict", "const", "const-correctness", "void*", "NULL"],
+    misconceptionTags: ["c.ptr_arithmetic_ub", "c.array_decay_confusion"],
+    keywords: ["pointer", "pointer arithmetic", "pointer scaling", "array decay", "pointer comparison", "void*", "NULL", "sizeof"],
+    language: "c"
+  }),
+  createNode({
+    id: "C200b",
+    title: "const and restrict qualifiers: aliasing rules and optimization hints",
+    track: "c-pointers",
+    depthTarget: "D2",
+    prerequisites: ["C200a"],
+    misconceptionTags: ["c.const_ptr_confusion"],
+    keywords: ["const", "const-correctness", "restrict", "top-level const", "pointer-to-const", "aliasing", "compiler optimization", "restrict alias promise"],
     language: "c"
   }),
   createNode({
@@ -19,7 +29,7 @@ const cPointersNodes = [
     title: "Function pointers, callbacks, and dispatch tables",
     track: "c-pointers",
     depthTarget: "D2",
-    prerequisites: ["C200"],
+    prerequisites: ["C200b"],
     misconceptionTags: ["c.fn_ptr_syntax_confusion", "c.callback_lifetime_confusion"],
     keywords: ["function pointer", "callback", "dispatch table", "typedef", "qsort", "signal handler", "vtable"],
     language: "c"
@@ -29,7 +39,7 @@ const cPointersNodes = [
     title: "Dynamic memory: malloc, realloc, free, and the arena pattern",
     track: "c-pointers",
     depthTarget: "D2",
-    prerequisites: ["C200"],
+    prerequisites: ["C200b"],
     misconceptionTags: ["c.double_free_confusion", "c.use_after_free_confusion", "c.arena_lifetime_confusion"],
     keywords: ["malloc", "calloc", "realloc", "free", "arena allocator", "memory leak", "valgrind", "heap"],
     language: "c"
@@ -45,7 +55,7 @@ const cIpcNodes = [
     title: "fork, waitpid, exec: process lifecycle and zombie/orphan processes",
     track: "c-ipc",
     depthTarget: "D2",
-    prerequisites: ["C200"],
+    prerequisites: ["C200b"],
     misconceptionTags: ["c.fork_copy_on_write_confusion", "c.zombie_orphan_confusion", "c.exec_replaces_image"],
     keywords: ["fork", "waitpid", "exec", "execve", "zombie", "orphan", "SIGCHLD", "pid", "process"],
     language: "c"
@@ -61,13 +71,23 @@ const cIpcNodes = [
     language: "c"
   }),
   createNode({
-    id: "C212",
-    title: "Shared memory: mmap MAP_SHARED, shm_open, and shm_unlink",
+    id: "C212a",
+    title: "Anonymous shared memory: mmap MAP_ANONYMOUS|MAP_SHARED between processes",
     track: "c-ipc",
     depthTarget: "D3",
-    prerequisites: ["C210"],
-    misconceptionTags: ["c.mmap_addr_confusion", "c.shm_unlink_timing_confusion"],
-    keywords: ["mmap", "MAP_SHARED", "MAP_ANONYMOUS", "shm_open", "shm_unlink", "munmap", "ftruncate", "POSIX shared memory"],
+    prerequisites: ["C210", "C301"],
+    misconceptionTags: ["c.mmap_addr_confusion"],
+    keywords: ["mmap", "MAP_SHARED", "MAP_ANONYMOUS", "anonymous shared memory", "fork shared memory", "munmap", "shared region"],
+    language: "c"
+  }),
+  createNode({
+    id: "C212b",
+    title: "POSIX named shared memory: shm_open, ftruncate, and shm_unlink",
+    track: "c-ipc",
+    depthTarget: "D3",
+    prerequisites: ["C212a"],
+    misconceptionTags: ["c.shm_unlink_timing_confusion"],
+    keywords: ["shm_open", "shm_unlink", "ftruncate", "POSIX shared memory", "named shared memory", "IPC", "/dev/shm", "mmap with fd"],
     language: "c"
   }),
   createNode({
@@ -97,13 +117,23 @@ const cSignalsNodes = [
     language: "c"
   }),
   createNode({
-    id: "C221",
-    title: "Signal masking: sigprocmask, async-signal-safety, and the self-pipe trick",
+    id: "C221a",
+    title: "Signal masks: sigprocmask, sigset_t, and blocking signals",
     track: "c-signals",
     depthTarget: "D3",
     prerequisites: ["C220"],
-    misconceptionTags: ["c.sigprocmask_inherit_confusion", "c.async_signal_unsafe", "c.self_pipe_race_confusion"],
-    keywords: ["sigprocmask", "SIG_BLOCK", "SIG_UNBLOCK", "async-signal-safe", "self-pipe trick", "signalfd", "sigsuspend"],
+    misconceptionTags: ["c.sigprocmask_inherit_confusion"],
+    keywords: ["sigprocmask", "sigset_t", "sigemptyset", "sigaddset", "SIG_BLOCK", "SIG_UNBLOCK", "SIG_SETMASK", "pending signals", "sigsuspend"],
+    language: "c"
+  }),
+  createNode({
+    id: "C221b",
+    title: "Self-pipe trick: async-signal-safe I/O in event loops",
+    track: "c-signals",
+    depthTarget: "D3",
+    prerequisites: ["C221a"],
+    misconceptionTags: ["c.async_signal_unsafe", "c.self_pipe_race_confusion"],
+    keywords: ["self-pipe trick", "async-signal-safe", "write in signal handler", "pipe pair", "event loop", "signalfd", "select/poll with signals"],
     language: "c"
   })
 ];
@@ -117,7 +147,7 @@ const cConcurrencyNodes = [
     title: "POSIX threads: pthread_create, pthread_join, and pthread_detach",
     track: "c-concurrency",
     depthTarget: "D3",
-    prerequisites: ["C200"],
+    prerequisites: ["C200b"],
     misconceptionTags: ["c.thread_stack_lifetime_confusion", "c.detach_vs_join_confusion"],
     keywords: ["pthread_create", "pthread_join", "pthread_detach", "pthread_t", "thread function", "thread argument", "errno"],
     language: "c"
@@ -153,7 +183,7 @@ const cNetworkingNodes = [
     title: "TCP sockets: socket, bind, listen, accept, connect — echo server",
     track: "c-networking",
     depthTarget: "D2",
-    prerequisites: ["C200"],
+    prerequisites: ["C200b"],
     misconceptionTags: ["c.socket_close_vs_shutdown", "c.bind_already_in_use_confusion"],
     keywords: ["socket", "bind", "listen", "accept", "connect", "send", "recv", "TCP", "sockaddr_in", "htons", "inet_pton"],
     language: "c"
@@ -261,13 +291,23 @@ const cVirtualMemoryNodes = [
 // ---------------------------------------------------------------------------
 const cFilesystemNodes = [
   createNode({
-    id: "C400",
-    title: "File descriptors: open flags, O_CLOEXEC, dup2, fd table",
+    id: "C400a",
+    title: "File descriptor basics: open, close, read, write, and the fd table",
     track: "c-filesystem",
     depthTarget: "D2",
     prerequisites: [],
+    misconceptionTags: ["c.fd_integer_confusion"],
+    keywords: ["file descriptor", "open", "close", "read", "write", "fd table", "per-process fd", "errno", "O_RDONLY", "O_WRONLY", "O_CREAT"],
+    language: "c"
+  }),
+  createNode({
+    id: "C400b",
+    title: "dup2 and O_CLOEXEC: fd duplication and exec-time cleanup",
+    track: "c-filesystem",
+    depthTarget: "D2",
+    prerequisites: ["C400a"],
     misconceptionTags: ["c.fd_cloexec_confusion", "c.dup2_vs_dup_confusion"],
-    keywords: ["file descriptor", "open", "O_RDONLY", "O_WRONLY", "O_CREAT", "O_CLOEXEC", "dup2", "fd table", "close-on-exec"],
+    keywords: ["dup2", "dup", "O_CLOEXEC", "FD_CLOEXEC", "fcntl", "close-on-exec", "fd redirect", "stdin redirect", "stdout redirect"],
     language: "c"
   }),
   createNode({
@@ -275,7 +315,7 @@ const cFilesystemNodes = [
     title: "File metadata: stat, fstat, lstat, inodes, and timestamps",
     track: "c-filesystem",
     depthTarget: "D2",
-    prerequisites: ["C400"],
+    prerequisites: ["C400b"],
     misconceptionTags: ["c.stat_vs_fstat_confusion", "c.hardlink_inode_confusion"],
     keywords: ["stat", "fstat", "lstat", "inode", "hardlink", "symlink", "timestamp", "st_mode", "st_size"],
     language: "c"
@@ -295,7 +335,7 @@ const cFilesystemNodes = [
     title: "Atomic file operations: rename-as-swap and safe write patterns",
     track: "c-filesystem",
     depthTarget: "D2",
-    prerequisites: ["C400"],
+    prerequisites: ["C400b"],
     misconceptionTags: ["c.rename_not_atomic_confusion", "c.fsync_vs_fdatasync_confusion"],
     keywords: ["rename", "atomic", "safe write", "temp file", "POSIX", "fsync", "fdatasync", "write-then-rename"],
     language: "c"
@@ -305,7 +345,7 @@ const cFilesystemNodes = [
     title: "Memory-mapped files: file-backed mmap, MAP_SHARED, and msync",
     track: "c-filesystem",
     depthTarget: "D3",
-    prerequisites: ["C301", "C400"],
+    prerequisites: ["C301", "C400b"],
     misconceptionTags: ["c.mmap_file_size_confusion", "c.msync_vs_fsync_confusion"],
     keywords: ["mmap", "MAP_SHARED", "MAP_PRIVATE", "msync", "file-backed", "shared memory", "ftruncate", "memory-mapped I/O"],
     language: "c"
@@ -371,7 +411,7 @@ const cKqueueIoNodes = [
     title: "Scatter-gather I/O: readv and writev for buffer chains",
     track: "c-kqueue-io",
     depthTarget: "D2",
-    prerequisites: ["C400"],
+    prerequisites: ["C400b"],
     misconceptionTags: ["c.iovec_alignment_confusion", "c.writev_partial_write_confusion"],
     keywords: ["readv", "writev", "iovec", "scatter-gather", "buffer chain", "vectored I/O", "preadv", "pwritev"],
     language: "c"
@@ -509,7 +549,7 @@ const cSubprocessSignalsNodes = [
     title: "Signal handling in runtimes: SIGTERM, SIGINT, SIGUSR2, and graceful shutdown",
     track: "c-subprocess-signals",
     depthTarget: "D2",
-    prerequisites: ["C220", "C221"],
+    prerequisites: ["C220", "C221b"],
     misconceptionTags: ["c.sigusr2_default_action_confusion", "c.graceful_shutdown_race_confusion"],
     keywords: ["SIGTERM", "SIGINT", "SIGUSR2", "graceful shutdown", "runtime", "inspector", "signal handler", "process termination"],
     language: "c"

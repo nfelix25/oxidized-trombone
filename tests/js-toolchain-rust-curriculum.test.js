@@ -191,14 +191,14 @@ test("all JS toolchain prerequisite IDs resolve in allCurricula", () => {
 // getCurriculumForLanguage("rust") includes core + toolchain
 // ---------------------------------------------------------------------------
 
-test("getCurriculumForLanguage('rust') returns core + toolchain nodes (120 total)", () => {
+test("getCurriculumForLanguage('rust') returns core + toolchain nodes (122 total)", () => {
   const graph = getCurriculumForLanguage("rust");
-  // Rust core: 50 nodes (S1xx+A2xx+A5xx+X1xx+A7xx+B1xx+C1xx+M1xx+G1xx)
+  // Rust core: 52 nodes (S1xx+A2xx+A5xx+X1xx+A7xx+B1xx+C1xx+M1xx+G1xx)
   // JS toolchain: 70 nodes (XL+XP+XA+XD+XR+XT+XM+XN+XG+XS)
-  // Total: 120
+  // Total: 122
   assert.equal(
     graph.nodes.length,
-    120,
-    `Expected 120 rust nodes (core + toolchain), got ${graph.nodes.length}`
+    122,
+    `Expected 122 rust nodes (core + toolchain), got ${graph.nodes.length}`
   );
 });

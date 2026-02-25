@@ -343,3 +343,54 @@ Seven nodes in the JS runtime curriculum SHALL list specific C systems curriculu
 #### Scenario: JR04 requires C703
 - **WHEN** the curriculum is loaded
 - **THEN** node JR04 has `"C703"` in its prerequisites array
+
+### Requirement: JS Runtime High-Priority Composite Nodes Are Split Into Atomic Sub-Nodes
+Nodes that conflate multiple unrelated concepts SHALL be replaced by atomic sub-nodes:
+
+- **JL06** (scope analysis: binding, hoisting, TDZ, strict mode) SHALL be split into: JL06a (binding and scope chain), JL06b (var hoisting and function hoisting), and JL06c (TDZ and strict mode). Chain: JL05→JL06a→JL06b→JL06c.
+- **JP03** (async/await desugaring: generator + promise machinery) SHALL be split into: JP03a (generator coroutine mechanics: suspend, resume, iterator protocol) and JP03b (async/await desugaring, prereqs JP01+JP03a).
+- **JC04** (module scope: live bindings, namespace objects, circular deps) SHALL be split into: JC04a (live bindings in ESM), JC04b (namespace objects, prereq JC04a), and JC04c (circular module dependencies, prereq JC04b).
+- **JR01** (string internals: interning, encoding, slices) SHALL be split into: JR01a (string interning), JR01b (one-byte vs two-byte encoding, prereq JR01a), and JR01c (string slices and cons strings, prereq JR01b).
+- **JR03** (module system: ESM records, dynamic import, import.meta) SHALL be split into: JR03a (module records: graph, link, evaluate phases), JR03b (dynamic import(), prereq JR03a), and JR03c (import.meta, prereq JR03b).
+- **JO07** (Proxy and Reflect) SHALL be split into: JO07a (Proxy trap mechanism, prereq JO03) and JO07b (Reflect API, prereq JO07a).
+- **JO01** (hidden classes and shapes) SHALL add JV01 (stack interpreter) as a prerequisite.
+
+#### Scenario: JL06a covers binding and scope chain only
+- **WHEN** a session targets node JL06a
+- **THEN** the scaffold plans content on binding analysis, scope chain structure, and identifier resolution — without hoisting or TDZ
+
+#### Scenario: JL06b covers hoisting only
+- **WHEN** a session targets node JL06b
+- **THEN** the scaffold plans content on var hoisting, function declaration hoisting, and how the scope analyzer pre-populates the scope before execution
+
+#### Scenario: JL06c covers TDZ and strict mode
+- **WHEN** a session targets node JL06c
+- **THEN** the scaffold plans content on temporal dead zone enforcement for let/const, strict mode scope differences, and TDZ as a sentinel in the register file
+
+#### Scenario: JP03a covers generator coroutine mechanics
+- **WHEN** a session targets node JP03a
+- **THEN** the scaffold plans content on function* syntax, yield suspend/resume semantics, the GeneratorObject state machine, and the iterator protocol implementation
+
+#### Scenario: JP03b covers async/await desugaring
+- **WHEN** a session targets node JP03b
+- **THEN** the scaffold plans content on rewriting async functions as generator + promise machinery, PromiseReactionJob scheduling at await, and async stack trace behavior
+
+#### Scenario: JC04a covers live bindings
+- **WHEN** a session targets node JC04a
+- **THEN** the scaffold plans content on ESM live binding semantics (exported bindings are references, not copies), and how import binding updates propagate
+
+#### Scenario: JC04c covers circular dependencies
+- **WHEN** a session targets node JC04c
+- **THEN** the scaffold plans content on circular module graphs, TDZ in modules, evaluation order guarantees, and how the module loader handles cycles
+
+#### Scenario: JR01a covers string interning
+- **WHEN** a session targets node JR01a
+- **THEN** the scaffold plans content on string interning, the symbol table for unique string identity, and when V8 interns strings
+
+#### Scenario: JR03a covers module records
+- **WHEN** a session targets node JR03a
+- **THEN** the scaffold plans content on the cyclic module record, the Parse → Link → Evaluate phase model, and ModuleStatus transitions
+
+#### Scenario: JO07a covers the Proxy trap mechanism
+- **WHEN** a session targets node JO07a
+- **THEN** the scaffold plans content on fundamental operations (get, set, has, deleteProperty), trap protocol, proxy invariant enforcement, and the handler object

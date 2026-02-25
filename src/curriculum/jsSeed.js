@@ -55,13 +55,33 @@ const jsLanguageFrontendNodes = [
     language: "c"
   }),
   createNode({
-    id: "JL06",
-    title: "Scope analysis: binding, hoisting, TDZ, strict mode",
+    id: "JL06a",
+    title: "Scope analysis: binding and scope chain",
     track: "js-language-frontend",
-    depthTarget: "D3",
+    depthTarget: "D2",
     prerequisites: ["JL05"],
-    misconceptionTags: ["js.hoisting_confusion", "js.tdz_confusion", "js.scope_chain_confusion"],
-    keywords: ["scope analysis", "binding", "hoisting", "temporal dead zone", "TDZ", "strict mode", "scope chain", "var hoisting"],
+    misconceptionTags: ["js.scope_chain_confusion"],
+    keywords: ["scope analysis", "binding", "scope chain", "lexical scope", "identifier resolution", "name lookup"],
+    language: "c"
+  }),
+  createNode({
+    id: "JL06b",
+    title: "Scope analysis: var hoisting and function hoisting",
+    track: "js-language-frontend",
+    depthTarget: "D2",
+    prerequisites: ["JL06a"],
+    misconceptionTags: ["js.hoisting_confusion"],
+    keywords: ["hoisting", "var hoisting", "function hoisting", "declaration hoisting", "scope analysis", "initializer"],
+    language: "c"
+  }),
+  createNode({
+    id: "JL06c",
+    title: "Scope analysis: TDZ and strict mode",
+    track: "js-language-frontend",
+    depthTarget: "D2",
+    prerequisites: ["JL06b"],
+    misconceptionTags: ["js.tdz_confusion"],
+    keywords: ["temporal dead zone", "TDZ", "let", "const", "strict mode", "use strict", "block scope", "TDZ error"],
     language: "c"
   }),
   createNode({
@@ -155,7 +175,7 @@ const jsBytecodeNodes = [
     title: "Compilation units: script vs module vs eval scope",
     track: "js-bytecode",
     depthTarget: "D2",
-    prerequisites: ["JB01", "JL06"],
+    prerequisites: ["JB01", "JL06c"],
     misconceptionTags: ["js.module_scope_hoisting_confusion", "js.eval_scope_confusion"],
     keywords: ["compilation unit", "module scope", "eval scope", "script scope", "compilation context", "strict mode", "top-level await"],
     language: "c"
@@ -257,7 +277,7 @@ const jsObjectModelNodes = [
     title: "Hidden classes and shapes: property maps and transition trees",
     track: "js-object-model",
     depthTarget: "D3",
-    prerequisites: [],
+    prerequisites: ["JV01"],
     misconceptionTags: ["js.hidden_class_per_instance_confusion", "js.transition_tree_branch_confusion"],
     keywords: ["hidden class", "shape", "property map", "transition tree", "V8 Maps", "monomorphic", "object layout", "Map transition"],
     language: "c"
@@ -313,13 +333,23 @@ const jsObjectModelNodes = [
     language: "c"
   }),
   createNode({
-    id: "JO07",
-    title: "Proxy and Reflect: intercepting fundamental object operations",
+    id: "JO07a",
+    title: "Proxy: trap mechanism and handler protocol",
     track: "js-object-model",
     depthTarget: "D3",
     prerequisites: ["JO03"],
-    misconceptionTags: ["js.proxy_invariant_confusion", "js.reflect_vs_object_confusion"],
-    keywords: ["Proxy", "Reflect", "trap", "get trap", "set trap", "fundamental operation", "proxy handler", "target"],
+    misconceptionTags: ["js.proxy_invariant_confusion"],
+    keywords: ["Proxy", "trap", "get trap", "set trap", "has trap", "deleteProperty", "proxy handler", "target", "proxy invariants"],
+    language: "c"
+  }),
+  createNode({
+    id: "JO07b",
+    title: "Reflect: the meta-object protocol API",
+    track: "js-object-model",
+    depthTarget: "D2",
+    prerequisites: ["JO07a"],
+    misconceptionTags: ["js.reflect_vs_object_confusion"],
+    keywords: ["Reflect", "Reflect.get", "Reflect.set", "Reflect.apply", "meta-object protocol", "fundamental operation", "Reflect vs Object"],
     language: "c"
   })
 ];
@@ -521,13 +551,23 @@ const jsPromisesAsyncNodes = [
     language: "c"
   }),
   createNode({
-    id: "JP03",
+    id: "JP03a",
+    title: "Generator coroutine mechanics: suspend, resume, and the iterator protocol",
+    track: "js-promises-async",
+    depthTarget: "D3",
+    prerequisites: ["JV06"],
+    misconceptionTags: ["js.generator_return_confusion", "js.generator_throw_confusion"],
+    keywords: ["generator", "function*", "yield", "suspend", "resume", "iterator protocol", "GeneratorObject", "generator state machine"],
+    language: "c"
+  }),
+  createNode({
+    id: "JP03b",
     title: "async/await desugaring: generator + promise machinery",
     track: "js-promises-async",
     depthTarget: "D3",
-    prerequisites: ["JP01", "JV06"],
+    prerequisites: ["JP01", "JP03a"],
     misconceptionTags: ["js.async_stack_trace_confusion", "js.await_microtask_count_confusion"],
-    keywords: ["async await", "desugaring", "generator", "suspend", "async stack trace", "AsyncFunction", "PromiseReactionJob"],
+    keywords: ["async await", "desugaring", "async stack trace", "AsyncFunction", "PromiseReactionJob", "await unwrapping"],
     language: "c"
   }),
   createNode({
@@ -535,7 +575,7 @@ const jsPromisesAsyncNodes = [
     title: "Async iterators: Symbol.asyncIterator and for-await-of",
     track: "js-promises-async",
     depthTarget: "D3",
-    prerequisites: ["JP03", "JO06"],
+    prerequisites: ["JP03b", "JO06"],
     misconceptionTags: ["js.async_gen_return_confusion", "js.for_await_cancel_confusion"],
     keywords: ["async iterator", "Symbol.asyncIterator", "for-await-of", "async generator", "AsyncIterator protocol"],
     language: "c"
@@ -571,7 +611,7 @@ const jsClosuresScopeNodes = [
     title: "Upvalues: capturing enclosing scope variables",
     track: "js-closures-scope",
     depthTarget: "D2",
-    prerequisites: ["JL06"],
+    prerequisites: ["JL06c"],
     misconceptionTags: ["js.closure_copy_vs_reference_confusion", "js.open_closed_upvalue_confusion"],
     keywords: ["upvalue", "closure", "enclosing scope", "open upvalue", "closed upvalue", "Lua", "captured variable"],
     language: "c"
@@ -591,19 +631,39 @@ const jsClosuresScopeNodes = [
     title: "Variable hoisting: var function-scoped, let/const TDZ",
     track: "js-closures-scope",
     depthTarget: "D2",
-    prerequisites: ["JL06"],
+    prerequisites: ["JL06c"],
     misconceptionTags: ["js.hoisting_initialization_confusion", "js.tdz_typeof_confusion"],
     keywords: ["hoisting", "var", "let", "const", "TDZ", "temporal dead zone", "function scope", "block scope"],
     language: "c"
   }),
   createNode({
-    id: "JC04",
-    title: "Module scope: live bindings, namespace objects, circular deps",
+    id: "JC04a",
+    title: "Module scope: live bindings in ESM",
+    track: "js-closures-scope",
+    depthTarget: "D2",
+    prerequisites: ["JB06", "JC01"],
+    misconceptionTags: ["js.live_binding_vs_copy_confusion"],
+    keywords: ["module scope", "live binding", "ESM", "import binding", "export binding", "binding update", "named export"],
+    language: "c"
+  }),
+  createNode({
+    id: "JC04b",
+    title: "Module namespace objects and the namespace exotic object",
+    track: "js-closures-scope",
+    depthTarget: "D2",
+    prerequisites: ["JC04a"],
+    misconceptionTags: ["js.namespace_object_proxy_confusion"],
+    keywords: ["namespace object", "module namespace", "namespace exotic", "import * as", "[[Module]]", "namespace iteration"],
+    language: "c"
+  }),
+  createNode({
+    id: "JC04c",
+    title: "Circular module dependencies and evaluation order",
     track: "js-closures-scope",
     depthTarget: "D3",
-    prerequisites: ["JB06", "JC01"],
-    misconceptionTags: ["js.live_binding_vs_copy_confusion", "js.circular_import_confusion"],
-    keywords: ["module scope", "live binding", "ESM", "namespace object", "circular dependency", "module namespace", "import binding"],
+    prerequisites: ["JC04b"],
+    misconceptionTags: ["js.circular_import_confusion"],
+    keywords: ["circular dependency", "circular import", "evaluation order", "TDZ in modules", "module graph", "link phase", "dead binding"],
     language: "c"
   }),
   createNode({
@@ -699,13 +759,33 @@ const jsJitOptimizationNodes = [
 // ---------------------------------------------------------------------------
 const jsRuntimeInternalsNodes = [
   createNode({
-    id: "JR01",
-    title: "String internals: interning, one-byte vs two-byte, slices",
+    id: "JR01a",
+    title: "String interning: the symbol table and identity equality",
     track: "js-runtime-internals",
     depthTarget: "D2",
     prerequisites: [],
-    misconceptionTags: ["js.string_immutable_copy_confusion", "js.intern_vs_literal_confusion"],
-    keywords: ["string interning", "one-byte string", "two-byte string", "string slice", "cons string", "rope", "SeqString", "SlicedString"],
+    misconceptionTags: ["js.intern_vs_literal_confusion"],
+    keywords: ["string interning", "symbol table", "string identity", "V8 strings", "intern pool", "heap string", "short string optimization"],
+    language: "c"
+  }),
+  createNode({
+    id: "JR01b",
+    title: "String encoding: one-byte vs two-byte representation",
+    track: "js-runtime-internals",
+    depthTarget: "D2",
+    prerequisites: ["JR01a"],
+    misconceptionTags: ["js.string_immutable_copy_confusion"],
+    keywords: ["one-byte string", "two-byte string", "Latin-1", "UTF-16", "string encoding", "SeqOneByteString", "SeqTwoByteString", "memory layout"],
+    language: "c"
+  }),
+  createNode({
+    id: "JR01c",
+    title: "String slices and cons strings: lazy concatenation",
+    track: "js-runtime-internals",
+    depthTarget: "D2",
+    prerequisites: ["JR01b"],
+    misconceptionTags: ["js.string_concat_copy_confusion"],
+    keywords: ["string slice", "SlicedString", "cons string", "ConsString", "rope", "flat string", "string flattening", "lazy concat"],
     language: "c"
   }),
   createNode({
@@ -719,13 +799,33 @@ const jsRuntimeInternalsNodes = [
     language: "c"
   }),
   createNode({
-    id: "JR03",
-    title: "Module system: ESM records, dynamic import(), import.meta",
+    id: "JR03a",
+    title: "Module records: the module graph, link phase, and evaluate phase",
     track: "js-runtime-internals",
     depthTarget: "D3",
-    prerequisites: ["JB06", "JC04"],
-    misconceptionTags: ["js.dynamic_import_sync_confusion", "js.import_meta_confusion"],
-    keywords: ["ESM", "module record", "dynamic import", "import.meta", "module loader", "link phase", "evaluate phase"],
+    prerequisites: ["JB06", "JC04c"],
+    misconceptionTags: ["js.module_record_confusion"],
+    keywords: ["ESM", "module record", "module graph", "link phase", "evaluate phase", "cyclic module record", "ModuleStatus"],
+    language: "c"
+  }),
+  createNode({
+    id: "JR03b",
+    title: "Dynamic import(): lazy loading and the import() promise",
+    track: "js-runtime-internals",
+    depthTarget: "D2",
+    prerequisites: ["JR03a"],
+    misconceptionTags: ["js.dynamic_import_sync_confusion"],
+    keywords: ["dynamic import", "import()", "lazy loading", "code splitting", "import promise", "async module loading"],
+    language: "c"
+  }),
+  createNode({
+    id: "JR03c",
+    title: "import.meta: module URL, dirname, and host-defined metadata",
+    track: "js-runtime-internals",
+    depthTarget: "D2",
+    prerequisites: ["JR03b"],
+    misconceptionTags: ["js.import_meta_confusion"],
+    keywords: ["import.meta", "import.meta.url", "import.meta.dirname", "host-defined", "module metadata", "Node.js module"],
     language: "c"
   }),
   createNode({

@@ -1,0 +1,86 @@
+{
+  "schema_version": "context_packet_v1",
+  "packet_id": "e74094fb-e402-4dde-aaca-2718eb72d295",
+  "timestamp_utc": "2026-02-25T07:06:52.069Z",
+  "role": "starter-expand",
+  "task_type": "starter_expand",
+  "learner_profile": {
+    "masteryLevel": 0
+  },
+  "curriculum_context": {
+    "node_id": "JR06",
+    "depth_target": "D2"
+  },
+  "misconception_context": {
+    "top_tags": []
+  },
+  "attempt_context": null,
+  "evidence_context": null,
+  "policy_context": {
+    "allow_reveal": false
+  },
+  "memory_context": {},
+  "scaffold_context": {
+    "scaffold_id": "scaffold-JR06-001",
+    "exercise_description": "Implement and validate a JS runtime structured-clone subsystem in C that serializes arbitrary worker messages, manages transferables safely, and exposes reliable postMessage IPC hooks.",
+    "lesson_plan": {
+      "section_intents": [
+        "Motivate why structured clone powers high-throughput postMessage between Worker threads and overcomes JSON serialization limits in JS runtimes.",
+        "Lay out the core structured clone algorithm phases (type tagging, traversal stack, transfer list validation) within the engine’s C/C++ subsystems.",
+        "Explain lifecycle tracking for transferables—ArrayBuffer, SharedArrayBuffer, MessagePort—and how ownership moves between workers without data races.",
+        "Worked example: step-by-step cloning of a nested object graph containing TypedArrays, highlighting stack operations and buffer duplication.",
+        "Worked example: transferring a MessagePort plus SharedArrayBuffer between workers, detailing the syscall/IPC hooks and state transitions.",
+        "Break down the serialized format layout (tags, lengths, handles) and differences for SharedArrayBuffer versus regular buffers.",
+        "Compare structured clone semantics to JSON.stringify and custom serializers, focusing on deep copy vs move semantics, fidelity, and performance cost.",
+        "Expose common pitfalls: non-cloneable objects, detached buffers, cyclic prototypes, and undefined behaviour when engine hooks skip slot sealing.",
+        "Detail resource-leak and signal-safety risks when cloning is interrupted (worker termination, cancellation) and mitigation strategies.",
+        "Bridge to next topic by linking structured clone constraints with upcoming transferable streams and zero-copy IPC scheduling."
+      ]
+    },
+    "starter_plan": {
+      "file_intents": [
+        "src/structured_clone_context.c: declare stubs sc_context_init, sc_context_register_transferable, sc_context_free for lifecycle and registry management (3 stubs).",
+        "src/structured_clone_encoder.c: declare stubs sc_encode_value, sc_encode_arraybuffer, sc_encode_shared_arraybuffer, sc_encode_postmessage_payload for serialization paths (4 stubs).",
+        "src/structured_clone_executor.c: declare stubs sc_dispatch_to_worker, sc_transfer_ports, sc_commit_transfer_list for worker dispatch and transfer finalization (3 stubs)."
+      ]
+    },
+    "test_plan": {
+      "case_intents": [
+        "Assert sc_context_init zeroes the arena, allocates traversal stacks, and returns 0 on success or -ENOMEM on failure (UB risk if fields left uninitialized).",
+        "Assert sc_context_register_transferable records buffer handles exactly once and returns -EEXIST on duplicates (UB risk: dangling pointers if stub empty).",
+        "Assert sc_context_free releases all arenas, detaches registered transferables, and is idempotent (UB risk: leaks + double-free).",
+        "Assert sc_encode_value walks the graph depth-first, preserving object identity table and rejecting unsupported tags with -EINVAL.",
+        "Assert sc_encode_arraybuffer copies bytes into the clone buffer and marks source as detached on transfer (UB risk: host sees stale pointer).",
+        "Assert sc_encode_shared_arraybuffer emits handle IDs without copying and refuses transfer when SAB lacks atomics flag (UB risk: concurrent readers on freed memory).",
+        "Assert sc_encode_postmessage_payload assembles header + payload vectors respecting max size limits and surfaces -EMSGSIZE on overflow.",
+        "Assert sc_dispatch_to_worker posts the serialized payload to the target worker queue and signals readiness via eventfds.",
+        "Assert sc_transfer_ports moves MessagePort ownership, closes sender entanglement, and surfaces -EBUSY if port already in transfer list (UB risk: double-close).",
+        "Assert sc_commit_transfer_list finalizes ownership (detaches buffers, updates handles) and rolls back on mid-commit failure."
+      ]
+    }
+  },
+  "prior_loop_sections": [],
+  "current_sections": [
+    {
+      "schema_version": "starter_section_v1",
+      "role": "starter-expand",
+      "section_id": "structured-clone-context-c",
+      "type": "code",
+      "file_path": "structured_clone_context.c",
+      "content": "#include \"structured_clone_context.h\"\n#include <stddef.h>\n\nint sc_context_init(struct sc_context *ctx, size_t arena_bytes)\n{\n    (void)ctx;\n    (void)arena_bytes;\n\n    /* Initialize the structured clone arena and traversal stacks so the learner must zero buffers, allocate traversal storage, and propagate -ENOMEM style failures. */\n    return 0;\n}\n\nint sc_context_register_transferable(struct sc_context *ctx,\n                                     const struct sc_transferable_desc *desc)\n{\n    (void)ctx;\n    (void)desc;\n\n    /* Track a transferable in the context registry so the learner must detect duplicates, record handle metadata, and surface -EEXIST when the same handle is registered twice. */\n    return 0;\n}\n\nint sc_context_free(struct sc_context *ctx)\n{\n    (void)ctx;\n\n    /* Release the structured clone context so the learner must walk registered transferables, detach buffers, free arenas, and keep the routine idempotent. */\n    return 0;\n}\n",
+      "is_complete": false,
+      "next_focus": "structured_clone_context.h"
+    },
+    {
+      "schema_version": "starter_section_v1",
+      "role": "starter-expand",
+      "section_id": "structured-clone-context-h",
+      "type": "code",
+      "file_path": "structured_clone_context.h",
+      "content": "#ifndef STRUCTURED_CLONE_CONTEXT_H\n#define STRUCTURED_CLONE_CONTEXT_H\n\n#include <stddef.h>\n\nstruct sc_transferable_desc {\n    void *handle;\n    size_t length;\n    unsigned int flags;\n};\n\nstruct sc_context {\n    void *arena_base;\n    size_t arena_size;\n    size_t arena_used;\n    unsigned int transfer_count;\n    void *transfer_entries;\n};\n\n/* Initialize the structured clone arena and traversal stacks so the learner must zero buffers, allocate traversal storage, and propagate -ENOMEM style failures. */\nint sc_context_init(struct sc_context *ctx, size_t arena_bytes);\n\n/* Track a transferable in the context registry so the learner must detect duplicates, record handle metadata, and surface -EEXIST when the same handle is registered twice. */\nint sc_context_register_transferable(struct sc_context *ctx,\n                                     const struct sc_transferable_desc *desc);\n\n/* Release the structured clone context so the learner must walk registered transferables, detach buffers, free arenas, and keep the routine idempotent. */\nint sc_context_free(struct sc_context *ctx);\n\n#endif /* STRUCTURED_CLONE_CONTEXT_H */\n",
+      "is_complete": false,
+      "next_focus": "structured_clone_encoder.c"
+    }
+  ],
+  "next_focus": "structured_clone_encoder.c"
+}

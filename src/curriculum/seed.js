@@ -52,13 +52,22 @@ const syntaxBasicsNodes = [
     keywords: ["String", "&str", "str", "string literal", "to_string", "to_owned", "format!", "UTF-8", "push_str", "as_str"]
   }),
   createNode({
-    id: "S105",
-    title: "Closures and higher-order functions",
+    id: "S105a",
+    title: "Closure syntax and capture rules",
     track: "syntax-basics",
     depthTarget: "D2",
     prerequisites: ["S101"],
     misconceptionTags: ["syn.closure_type_inference_confusion", "syn.fn_pointer_vs_closure"],
-    keywords: ["closure", "|args|", "Fn", "FnMut", "FnOnce", "capture", "higher-order", "fn pointer", "type inference"]
+    keywords: ["closure", "|args|", "capture", "move closure", "higher-order", "fn pointer", "type inference", "environment"]
+  }),
+  createNode({
+    id: "S105b",
+    title: "Fn, FnMut, and FnOnce: closure trait bounds",
+    track: "syntax-basics",
+    depthTarget: "D2",
+    prerequisites: ["S105a", "G101"],
+    misconceptionTags: ["syn.closure_type_inference_confusion", "syn.fn_pointer_vs_closure"],
+    keywords: ["Fn", "FnMut", "FnOnce", "closure trait bounds", "trait bound", "higher-order function", "once-callable"]
   }),
   createNode({
     id: "S106",
@@ -184,7 +193,7 @@ const foundationsNodes = [
     title: "Closures, ownership, and move capture",
     track: "foundations",
     depthTarget: "D2",
-    prerequisites: ["A200", "S105"],
+    prerequisites: ["A200", "S105b"],
     misconceptionTags: ["clos.move_capture_confusion", "clos.fn_trait_bound_confusion"],
     keywords: ["closure", "move", "capture", "FnOnce", "FnMut", "Fn", "borrow in closure", "environment"]
   }),
@@ -271,7 +280,7 @@ const collectionsNodes = [
     title: "Implementing the Iterator trait",
     track: "collections",
     depthTarget: "D2",
-    prerequisites: ["A503", "S106"],
+    prerequisites: ["A503", "S106", "G102"],
     misconceptionTags: ["iter.next_return_type_confusion", "iter.associated_item_confusion"],
     keywords: ["Iterator", "next", "Item", "associated type", "impl Iterator", "custom iterator", "for loop protocol"]
   })
@@ -291,13 +300,22 @@ const testingNodes = [
     keywords: ["#[test]", "#[cfg(test)]", "assert_eq!", "assert!", "should_panic", "integration test", "tests/", "test module"]
   }),
   createNode({
-    id: "X101",
-    title: "Test organization and mocking patterns",
+    id: "X101a",
+    title: "Trait-based mocking and dependency injection in tests",
     track: "testing",
     depthTarget: "D2",
-    prerequisites: ["X100", "S106", "A210"],
+    prerequisites: ["G101", "X100"],
     misconceptionTags: ["test.mock_trait_confusion", "test.test_isolation_confusion"],
-    keywords: ["trait mock", "test double", "dependency injection", "test fixtures", "setup", "test helpers", "proptest"]
+    keywords: ["trait mock", "test double", "dependency injection", "mockall", "test fixtures", "test helpers", "seam"]
+  }),
+  createNode({
+    id: "X101b",
+    title: "Property-based testing with proptest",
+    track: "testing",
+    depthTarget: "D2",
+    prerequisites: ["X100"],
+    misconceptionTags: ["test.proptest_vs_fuzz_confusion"],
+    keywords: ["proptest", "property-based testing", "arbitrary", "strategy", "shrinking", "QuickCheck", "invariant"]
   })
 ];
 
@@ -321,7 +339,7 @@ const asyncNodes = [
     depthTarget: "D2",
     prerequisites: ["A203", "A700"],
     misconceptionTags: ["async.lifetime_across_await_confusion", "async.send_bound_confusion"],
-    keywords: ["async", "await", "ownership", "lifetime", "send", "sync"]
+    keywords: ["async", "await", "ownership", "lifetime", "Send", "Sync", "Send/Sync marker traits", "thread safety bounds"]
   }),
   createNode({
     id: "A702",

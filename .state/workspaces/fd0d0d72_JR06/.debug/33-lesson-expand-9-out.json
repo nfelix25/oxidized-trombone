@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "clone-interruption-safety",
+    "type": "concept",
+    "content": "Cloning only looks atomic to JavaScript; the runtime is juggling arenas, transfer registries, and kernel handles that can leak if a worker dies or a cancellation signal lands between syscalls. If `sc_encode_value` has copied half a gigabyte of ArrayBuffers when SIGTERM arrives, the arena pointers remain referenced by no worker, yet the backing stores stay mapped. Likewise, an in-flight SharedArrayBuffer transfer might have duplicated its file descriptor into the destination worker without clearing the sender’s ownership bit, so both ends try to free it when the scheduler next runs. To harden this path, keep an explicit rollback ledger (allocated pages, registered handles, eventfds) and mask asynchronous signals while the ledger is mutated so you never unwind with inconsistent bookkeeping. The skeleton below blocks SIGTERM/SIGUSR1 while staging the payload, installs a cleanup handler that detaches partially registered transferables, and ensures `sc_abort_pending_transfers` runs on every failure path:\n```c\nint sc_clone_safe(struct sc_context *ctx, struct sc_worker_endpoint *dst,\n                  const struct sc_message_record *rec)\n{\n    sigset_t oldmask, mask;\n    sigemptyset(&mask);\n    sigaddset(&mask, SIGTERM);\n    pthread_sigmask(SIG_BLOCK, &mask, &oldmask);\n\n    if (sc_context_init(ctx, 128 * 1024))\n        goto restore;\n    pthread_cleanup_push(sc_cleanup_transfers, ctx);\n\n    if (sc_encode_postmessage_payload(ctx, rec, &ctx->staged))\n        goto fail;\n    if (write(dst->queue_fd, ctx->staged.data, ctx->staged.length) < 0)\n        goto fail;\n\n    pthread_cleanup_pop(0);\n    sc_context_free(ctx);\nrestore:\n    pthread_sigmask(SIG_SETMASK, &oldmask, NULL);\n    return 0;\nfail:\n    sc_abort_pending_transfers(ctx);\n    pthread_cleanup_pop(1);\n    sc_context_free(ctx);\n    goto restore;\n}\n```\nPair this with periodic watchdog sweeps that call `sc_context_free` on abandoned contexts and close any queue/eventfd pair left in the detaching state; that keeps both memory usage and kernel-handle counts bounded even when workers crash mid-clone.",
+    "is_complete": false,
+    "next_focus": "Bridge to next topic by linking structured clone constraints with upcoming transferable streams and zero-copy IPC scheduling."
+  }
+}

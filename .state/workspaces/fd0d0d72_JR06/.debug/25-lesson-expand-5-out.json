@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "worked-example-port-sab-transfer",
+    "type": "worked_example",
+    "content": "Moving a MessagePort and a SharedArrayBuffer in one transaction means the executor must juggle both ownership tables and OS handles. First, the encoder validates that the SAB was created with atomics (otherwise multiple workers could observe torn writes). Next it locks both port endpoints, marks the sender half as \"detaching\", and stages the SAB handle into the transfer list without copying any bytes. Once the payload bytes are queued, the executor emits an eventfd tick to wake the destination worker; only when the worker acks does the runtime flip both assets to the \"committed\" state.\n```c\n#include <errno.h>\n#include <stdint.h>\n#include <stdio.h>\n#include <string.h>\n#include <sys/eventfd.h>\n#include <unistd.h>\n\nstruct sc_transferable_desc { void *handle; size_t length; unsigned flags; };\nstruct sc_message_port { int queue_fd; int signal_fd; int state; };\n\nstatic int move_port(struct sc_message_port *port)\n{\n    if (port->state != 0)\n        return -EBUSY;\n    port->state = 1; /* detaching */\n    uint64_t tick = 1;\n    if (write(port->signal_fd, &tick, sizeof(tick)) != sizeof(tick))\n        return -EIO;\n    return 0;\n}\n\nint main(void)\n{\n    int queue_pipe[2];\n    pipe(queue_pipe);\n    int signal_fd = eventfd(0, 0);\n    struct sc_message_port port = { queue_pipe[1], signal_fd, 0 };\n\n    struct sc_transferable_desc sab = {\n        .handle = (void *)(intptr_t)42, /* shared memory handle */\n        .length = 4096,\n        .flags = 0x1u /* SAB_FLAG_HAS_ATOMICS */\n    };\n\n    if (move_port(&port) < 0)\n        return 1;\n\n    const char msg[] = \"postMessage payload\";\n    write(port.queue_fd, msg, sizeof(msg));\n\n    uint64_t ack;\n    read(signal_fd, &ack, sizeof(ack));\n    port.state = 2;      /* committed */\n    sab.flags |= 0x2u;   /* mark transferred */\n\n    dprintf(STDOUT_FILENO, \"queued %zu bytes, handle=%p committed\\n\",\n            sizeof(msg), sab.handle);\n    return 0;\n}\n```\nHere the sender moves the port by writing to its signal fd before the data hits `queue_fd`, mirroring how browsers gate MessagePort ownership. The SAB never copies; instead the descriptor’s `handle` is tagged as transferred so the receiver can map it with `mmap` and increment the shared refcount once its worker loop sees the wakeup tick.",
+    "is_complete": false,
+    "next_focus": "Break down the serialized format layout (tags, lengths, handles) and differences for SharedArrayBuffer versus regular buffers."
+  }
+}

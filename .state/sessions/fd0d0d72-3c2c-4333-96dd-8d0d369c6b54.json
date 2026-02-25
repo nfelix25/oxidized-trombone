@@ -1,0 +1,29 @@
+{
+  "sessionId": "fd0d0d72-3c2c-4333-96dd-8d0d369c6b54",
+  "startedAt": "2026-02-25T07:05:03.783Z",
+  "mode": "guided",
+  "nodeId": "JR06",
+  "language": "c",
+  "masteryState": {
+    "byNode": {},
+    "history": []
+  },
+  "misconceptionState": {
+    "attempts": [],
+    "counts": {}
+  },
+  "attempts": [],
+  "exerciseId": "scaffold-JR06-001",
+  "lessonFile": "/Users/noelfelix/Code/oxidized-trombone/.state/workspaces/fd0d0d72_JR06/LESSON.md",
+  "workspaceDir": "/Users/noelfelix/Code/oxidized-trombone/.state/workspaces/fd0d0d72_JR06",
+  "attemptState": {
+    "exerciseId": "scaffold-JR06-001",
+    "attemptIndex": 0,
+    "hintLevelUsed": 0,
+    "elapsedMinutes": 0,
+    "history": [],
+    "reviews": []
+  },
+  "lastHintPack": null,
+  "status": "active"
+}

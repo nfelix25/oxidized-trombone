@@ -26,13 +26,13 @@ test("JS runtime nodes: all use language='c'", () => {
 // Total node count
 // ---------------------------------------------------------------------------
 
-test("JS runtime curriculum has exactly 70 nodes", () => {
+test("JS runtime curriculum has exactly 80 nodes", () => {
   const nodes = getJsRuntimeNodes();
-  // JL(9)+JB(6)+JV(8)+JO(7)+JG(8)+JE(8)+JP(6)+JC(5)+JT(7)+JR(6) = 70
+  // JL(11)+JB(6)+JV(8)+JO(8)+JG(8)+JE(8)+JP(7)+JC(7)+JT(7)+JR(10) = 80
   assert.equal(
     nodes.length,
-    70,
-    `Expected 70 JS runtime nodes, got ${nodes.length}`
+    80,
+    `Expected 80 JS runtime nodes, got ${nodes.length}`
   );
 });
 
@@ -62,9 +62,9 @@ test("JS runtime: all 10 tracks are present", () => {
 // Track node counts
 // ---------------------------------------------------------------------------
 
-test("js-language-frontend has 9 nodes (JL01–JL09)", () => {
+test("js-language-frontend has 11 nodes (JL01–JL09 + JL06a/JL06b/JL06c)", () => {
   const track = allCurricula.tracks["js-language-frontend"];
-  assert.equal(track.nodeIds.length, 9, `Expected 9, got ${track.nodeIds.length}`);
+  assert.equal(track.nodeIds.length, 11, `Expected 11, got ${track.nodeIds.length}`);
 });
 
 test("js-bytecode has 6 nodes (JB01–JB06)", () => {
@@ -77,9 +77,9 @@ test("js-virtual-machine has 8 nodes (JV01–JV08)", () => {
   assert.equal(track.nodeIds.length, 8, `Expected 8, got ${track.nodeIds.length}`);
 });
 
-test("js-object-model has 7 nodes (JO01–JO07)", () => {
+test("js-object-model has 8 nodes (JO01–JO07b)", () => {
   const track = allCurricula.tracks["js-object-model"];
-  assert.equal(track.nodeIds.length, 7, `Expected 7, got ${track.nodeIds.length}`);
+  assert.equal(track.nodeIds.length, 8, `Expected 8, got ${track.nodeIds.length}`);
 });
 
 test("js-garbage-collection has 8 nodes (JG01–JG08)", () => {
@@ -92,14 +92,14 @@ test("js-event-loop has 8 nodes (JE01–JE08)", () => {
   assert.equal(track.nodeIds.length, 8, `Expected 8, got ${track.nodeIds.length}`);
 });
 
-test("js-promises-async has 6 nodes (JP01–JP06)", () => {
+test("js-promises-async has 7 nodes (JP01–JP06 + JP03a/JP03b)", () => {
   const track = allCurricula.tracks["js-promises-async"];
-  assert.equal(track.nodeIds.length, 6, `Expected 6, got ${track.nodeIds.length}`);
+  assert.equal(track.nodeIds.length, 7, `Expected 7, got ${track.nodeIds.length}`);
 });
 
-test("js-closures-scope has 5 nodes (JC01–JC05)", () => {
+test("js-closures-scope has 7 nodes (JC01–JC05 + JC04a/JC04b/JC04c)", () => {
   const track = allCurricula.tracks["js-closures-scope"];
-  assert.equal(track.nodeIds.length, 5, `Expected 5, got ${track.nodeIds.length}`);
+  assert.equal(track.nodeIds.length, 7, `Expected 7, got ${track.nodeIds.length}`);
 });
 
 test("js-jit-optimization has 7 nodes (JT01–JT07)", () => {
@@ -107,9 +107,9 @@ test("js-jit-optimization has 7 nodes (JT01–JT07)", () => {
   assert.equal(track.nodeIds.length, 7, `Expected 7, got ${track.nodeIds.length}`);
 });
 
-test("js-runtime-internals has 6 nodes (JR01–JR06)", () => {
+test("js-runtime-internals has 10 nodes (JR01a–JR06 + JR01b/JR01c/JR03a/JR03b/JR03c)", () => {
   const track = allCurricula.tracks["js-runtime-internals"];
-  assert.equal(track.nodeIds.length, 6, `Expected 6, got ${track.nodeIds.length}`);
+  assert.equal(track.nodeIds.length, 10, `Expected 10, got ${track.nodeIds.length}`);
 });
 
 // ---------------------------------------------------------------------------

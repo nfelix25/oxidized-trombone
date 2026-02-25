@@ -163,13 +163,33 @@ const dataStructuresNodes = [
   }),
   createNode({
     id: "PD06",
-    title: "collections.deque, Counter, and defaultdict",
+    title: "collections.deque: double-ended queue, maxlen, and rotate",
     language: "python",
     track: "python-data-structures",
     depthTarget: "D2",
     prerequisites: ["PD01", "PD03"],
-    keywords: ["deque", "appendleft", "popleft", "rotate", "Counter", "most_common", "defaultdict", "collections"],
-    misconceptionTags: ["python.deque_is_O1_for_both_ends", "python.counter_inherits_from_dict"]
+    keywords: ["deque", "appendleft", "popleft", "rotate", "maxlen", "bounded queue", "collections", "O(1) ends"],
+    misconceptionTags: ["python.deque_is_O1_for_both_ends"]
+  }),
+  createNode({
+    id: "PD06b",
+    title: "collections.Counter: counting hashables and arithmetic operators",
+    language: "python",
+    track: "python-data-structures",
+    depthTarget: "D2",
+    prerequisites: ["PD06"],
+    keywords: ["Counter", "most_common", "counter arithmetic", "counter addition", "counter subtraction", "frequency analysis", "collections"],
+    misconceptionTags: ["python.counter_inherits_from_dict"]
+  }),
+  createNode({
+    id: "PD06c",
+    title: "collections.defaultdict: missing-key factory and grouping patterns",
+    language: "python",
+    track: "python-data-structures",
+    depthTarget: "D2",
+    prerequisites: ["PD06b"],
+    keywords: ["defaultdict", "default_factory", "missing key", "grouping", "collections", "dict.setdefault", "auto-vivification"],
+    misconceptionTags: ["python.defaultdict_key_is_always_created_on_access"]
   }),
   createNode({
     id: "PD07",
@@ -487,13 +507,23 @@ const typesNodes = [
   }),
   createNode({
     id: "PT07",
-    title: "TypedDict, Literal, Final, and ClassVar",
+    title: "typing.TypedDict: typed dicts with total/partial and inheritance",
     language: "python",
     track: "python-types",
     depthTarget: "D2",
     prerequisites: ["PT01", "PD03"],
-    keywords: ["TypedDict", "Literal", "Final", "ClassVar", "typed dictionary", "constant type", "class variable annotation"],
-    misconceptionTags: ["python.typeddict_is_not_enforced_at_runtime", "python.final_prevents_reassignment_only_in_type_checkers"]
+    keywords: ["TypedDict", "typed dictionary", "total=False", "partial TypedDict", "TypedDict inheritance", "required keys", "NotRequired", "Required"],
+    misconceptionTags: ["python.typeddict_is_not_enforced_at_runtime"]
+  }),
+  createNode({
+    id: "PT07b",
+    title: "Literal, Final, and ClassVar: value-constrained types and class annotations",
+    language: "python",
+    track: "python-types",
+    depthTarget: "D2",
+    prerequisites: ["PT07"],
+    keywords: ["Literal", "Final", "ClassVar", "value type", "constant annotation", "class variable", "Literal union", "ReadOnly"],
+    misconceptionTags: ["python.final_prevents_reassignment_only_in_type_checkers"]
   })
 ];
 
@@ -589,33 +619,73 @@ const asyncNodes = [
   }),
   createNode({
     id: "PA04",
-    title: "asyncio queues: Queue, Lock, Event, Semaphore, and Condition",
+    title: "asyncio.Queue: producer-consumer pattern, task_done, and join",
+    language: "python",
+    track: "python-async",
+    depthTarget: "D2",
+    prerequisites: ["PA03"],
+    keywords: ["asyncio.Queue", "asyncio.Queue.get", "asyncio.Queue.put", "task_done", "join", "producer-consumer", "backpressure", "async queue"],
+    misconceptionTags: ["python.asyncio_queue_is_not_thread_safe"]
+  }),
+  createNode({
+    id: "PA04b",
+    title: "asyncio synchronization primitives: Lock, Event, Semaphore, and Condition",
     language: "python",
     track: "python-async",
     depthTarget: "D3",
-    prerequisites: ["PA03"],
-    keywords: ["asyncio.Queue", "asyncio.Lock", "asyncio.Event", "asyncio.Semaphore", "asyncio.Condition", "async synchronization", "producer-consumer"],
-    misconceptionTags: ["python.asyncio_queue_is_not_thread_safe", "python.asyncio_lock_prevents_concurrent_coroutine_access"]
+    prerequisites: ["PA04"],
+    keywords: ["asyncio.Lock", "asyncio.Event", "asyncio.Semaphore", "asyncio.Condition", "async synchronization", "coordination primitives", "async lock"],
+    misconceptionTags: ["python.asyncio_lock_prevents_concurrent_coroutine_access"]
   }),
   createNode({
     id: "PA05",
-    title: "threading: Thread, Lock, Event, Condition, and RLock",
+    title: "threading: Thread creation and Lock for mutual exclusion",
     language: "python",
     track: "python-async",
     depthTarget: "D2",
     prerequisites: ["PE05"],
-    keywords: ["threading.Thread", "threading.Lock", "threading.RLock", "threading.Event", "threading.Condition", "threading.Semaphore", "daemon thread"],
-    misconceptionTags: ["python.thread_safety_requires_explicit_locking", "python.rlock_allows_reentrant_acquisition"]
+    keywords: ["threading.Thread", "threading.Lock", "acquire", "release", "daemon thread", "thread target", "thread join", "mutex"],
+    misconceptionTags: ["python.thread_safety_requires_explicit_locking"]
+  }),
+  createNode({
+    id: "PA05b",
+    title: "threading: Event, Condition, and RLock for signalling and re-entrant locking",
+    language: "python",
+    track: "python-async",
+    depthTarget: "D2",
+    prerequisites: ["PA05"],
+    keywords: ["threading.Event", "threading.Condition", "threading.RLock", "threading.Semaphore", "event signalling", "condition wait", "re-entrant lock", "notify"],
+    misconceptionTags: ["python.rlock_allows_reentrant_acquisition"]
   }),
   createNode({
     id: "PA06",
-    title: "multiprocessing: Process, Pool, Queue, and shared memory",
+    title: "multiprocessing.Process: fork semantics, start/join, and daemon processes",
     language: "python",
     track: "python-async",
     depthTarget: "D2",
     prerequisites: ["PA05", "PM01"],
-    keywords: ["multiprocessing.Process", "Pool.map", "Pool.starmap", "multiprocessing.Queue", "shared_memory", "subprocess", "fork"],
-    misconceptionTags: ["python.multiprocessing_bypasses_gil", "python.pool_map_blocks_until_complete"]
+    keywords: ["multiprocessing.Process", "fork", "spawn", "start", "join", "daemon process", "process isolation", "exit code"],
+    misconceptionTags: ["python.multiprocessing_bypasses_gil"]
+  }),
+  createNode({
+    id: "PA06b",
+    title: "multiprocessing.Pool: map, starmap, apply_async, and worker pools",
+    language: "python",
+    track: "python-async",
+    depthTarget: "D2",
+    prerequisites: ["PA06"],
+    keywords: ["multiprocessing.Pool", "Pool.map", "Pool.starmap", "Pool.apply_async", "chunksize", "worker pool", "imap", "imap_unordered"],
+    misconceptionTags: ["python.pool_map_blocks_until_complete"]
+  }),
+  createNode({
+    id: "PA06c",
+    title: "multiprocessing.Queue and shared memory: IPC between processes",
+    language: "python",
+    track: "python-async",
+    depthTarget: "D2",
+    prerequisites: ["PA06b"],
+    keywords: ["multiprocessing.Queue", "shared_memory", "SharedMemory", "multiprocessing.Value", "multiprocessing.Array", "IPC", "inter-process communication"],
+    misconceptionTags: ["python.multiprocessing_queue_is_thread_safe_too"]
   }),
   createNode({
     id: "PA07",

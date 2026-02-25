@@ -49,12 +49,12 @@ test("getCurriculumForLanguage: ZF01 has no prerequisites", () => {
 // Zig node count
 // ---------------------------------------------------------------------------
 
-test("getCurriculumForLanguage: zig curriculum has exactly 102 nodes", () => {
+test("getCurriculumForLanguage: zig curriculum has exactly 104 nodes", () => {
   const zigGraph = getCurriculumForLanguage("zig");
   assert.equal(
     zigGraph.nodes.length,
-    102,
-    `Expected 102 zig nodes, got ${zigGraph.nodes.length}`
+    104,
+    `Expected 104 zig nodes, got ${zigGraph.nodes.length}`
   );
 });
 

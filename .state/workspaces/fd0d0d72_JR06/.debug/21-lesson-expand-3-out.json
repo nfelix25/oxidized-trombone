@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "transferable-lifecycle-tracking",
+    "type": "concept",
+    "content": "Transferables are a contract: once a buffer or port enters the transfer list, the sender must never touch it again, and the receiver must know whether it owns a byte copy or a handle. A structured clone context tracks this through three lifecycles. ArrayBuffer entries start as registered handles, get duplicated into the destination arena, and are marked detached so the JS engine reuses the backing store pointer slot but zeros its length. SharedArrayBuffer entries skip the copy; instead we log their OS handle plus atomic-capability flag and ensure the target worker increments the reference count before the source decrements. MessagePorts behave like duplex pipes: the sender marks the entangled endpoint as \"closing\", the executor enqueues a detach op, and only when the receiver installs its end do we toggle the committed bit. A minimal lifecycle helper might look like:\n```c\nint sc_track_transferable(struct sc_context *ctx, struct sc_transferable_desc *desc)\n{\n    switch (desc->flags & SC_KIND_MASK) {\n    case SC_KIND_ARRAYBUFFER:\n        memcpy(arena_alloc(ctx, desc->length), desc->handle, desc->length);\n        return sc_mark_detached(desc);\n    case SC_KIND_SHARED_ARRAYBUFFER:\n        return sc_register_sab_handle(ctx, (int)(intptr_t)desc->handle, desc->length);\n    case SC_KIND_MESSAGEPORT:\n        return sc_queue_port_move(ctx, desc);\n    default:\n        return -EINVAL;\n    }\n}\n```\nThese guardrails let workers exchange huge payloads without data races because the runtime records every ownership transition before the executor ever writes to an IPC queue.",
+    "is_complete": false,
+    "next_focus": "Worked example: step-by-step cloning of a nested object graph containing TypedArrays, highlighting stack operations and buffer duplication."
+  }
+}

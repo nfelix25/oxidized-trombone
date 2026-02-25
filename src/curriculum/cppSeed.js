@@ -172,14 +172,24 @@ const classesNodes = [
     misconceptionTags: ["cpp.abstract_class_cannot_be_instantiated", "cpp.pure_virtual_can_have_body", "cpp.derived_must_implement_all_pure_virtual"]
   }),
   createNode({
-    id: "CP07",
-    title: "Virtual destructors and the diamond problem",
+    id: "CP07a",
+    title: "Virtual destructors: why non-virtual destructors in polymorphic bases cause UB",
+    language: "cpp",
+    track: "cpp-classes",
+    depthTarget: "D2",
+    prerequisites: ["CP05", "CP04"],
+    keywords: ["virtual destructor", "delete through base pointer", "UB", "vtable entry", "destructor", "polymorphic base", "Rule of Five"],
+    misconceptionTags: ["cpp.missing_virtual_destructor_is_ub"]
+  }),
+  createNode({
+    id: "CP07b",
+    title: "Diamond inheritance and virtual base classes",
     language: "cpp",
     track: "cpp-classes",
     depthTarget: "D3",
-    prerequisites: ["CP05", "CP04"],
-    keywords: ["virtual destructor", "object slicing", "diamond problem", "virtual inheritance", "multiple inheritance", "dominance rule", "virtual base class"],
-    misconceptionTags: ["cpp.missing_virtual_destructor_is_ub", "cpp.diamond_problem_needs_virtual_inheritance", "cpp.object_slicing_from_value_semantics"]
+    prerequisites: ["CP07a"],
+    keywords: ["diamond problem", "virtual inheritance", "multiple inheritance", "virtual base class", "dominance rule", "DDD pattern", "constructor delegation"],
+    misconceptionTags: ["cpp.diamond_problem_needs_virtual_inheritance", "cpp.object_slicing_from_value_semantics"]
   }),
   createNode({
     id: "CP08",
@@ -294,14 +304,24 @@ const memoryNodes = [
 // ---------------------------------------------------------------------------
 const moveNodes = [
   createNode({
-    id: "CV01",
-    title: "Value categories: lvalue, rvalue, xvalue, and prvalue",
+    id: "CV01a",
+    title: "Value categories: lvalue vs rvalue and move semantics motivation",
     language: "cpp",
     track: "cpp-move-semantics",
     depthTarget: "D2",
     prerequisites: ["CF04", "CP03"],
-    keywords: ["lvalue", "rvalue", "xvalue", "prvalue", "glvalue", "value category", "expression category", "identity", "movability"],
-    misconceptionTags: ["cpp.rvalue_is_temporary_always", "cpp.named_rvalue_ref_is_lvalue", "cpp.xvalue_is_expiring_value"]
+    keywords: ["lvalue", "rvalue", "rvalue reference", "&&", "move semantics", "has-an-address", "std::move", "move motivation"],
+    misconceptionTags: ["cpp.rvalue_is_temporary_always", "cpp.named_rvalue_ref_is_lvalue"]
+  }),
+  createNode({
+    id: "CV01b",
+    title: "Full value category taxonomy: glvalue, prvalue, xvalue and decltype implications",
+    language: "cpp",
+    track: "cpp-move-semantics",
+    depthTarget: "D3",
+    prerequisites: ["CV01a"],
+    keywords: ["glvalue", "prvalue", "xvalue", "value category", "expression category", "decltype", "guaranteed copy elision", "temporary materialization"],
+    misconceptionTags: ["cpp.xvalue_is_expiring_value", "cpp.rvalue_is_temporary_always"]
   }),
   createNode({
     id: "CV02",
@@ -309,7 +329,7 @@ const moveNodes = [
     language: "cpp",
     track: "cpp-move-semantics",
     depthTarget: "D2",
-    prerequisites: ["CV01", "CP03"],
+    prerequisites: ["CV01b", "CP03"],
     keywords: ["move constructor", "move assignment", "&&", "rvalue reference", "std::move", "transfer of ownership", "move semantics", "Rule of Five"],
     misconceptionTags: ["cpp.moved_from_object_is_valid_but_unspecified", "cpp.move_constructor_is_not_always_generated", "cpp.move_assignment_should_handle_self"]
   }),
@@ -496,24 +516,44 @@ const templatesNodes = [
     misconceptionTags: ["cpp.function_templates_no_partial_specialization", "cpp.specialization_must_match_primary", "cpp.partial_spec_more_specific_wins"]
   }),
   createNode({
-    id: "CT04",
-    title: "Variadic templates and parameter packs",
+    id: "CT04a",
+    title: "Variadic templates: parameter pack expansion and recursive unpacking",
     language: "cpp",
     track: "cpp-templates",
     depthTarget: "D3",
     prerequisites: ["CT01", "CF05"],
-    keywords: ["variadic template", "sizeof...", "parameter pack", "pack expansion", "fold expression", "recursive template", "tuple", "args..."],
-    misconceptionTags: ["cpp.variadic_template_is_not_variadic_function", "cpp.fold_expression_requires_cpp17", "cpp.pack_expansion_context_rules"]
+    keywords: ["variadic template", "sizeof...", "parameter pack", "pack expansion", "recursive template", "base case specialization", "args...", "tuple"],
+    misconceptionTags: ["cpp.variadic_template_is_not_variadic_function", "cpp.pack_expansion_context_rules"]
   }),
   createNode({
-    id: "CT05",
-    title: "SFINAE and enable_if: conditional template selection",
+    id: "CT04b",
+    title: "Fold expressions: unary and binary folds for pack reduction (C++17)",
     language: "cpp",
     track: "cpp-templates",
     depthTarget: "D3",
-    prerequisites: ["CT01"],
-    keywords: ["SFINAE", "enable_if", "enable_if_t", "substitution failure", "overload resolution", "type constraint", "decltype", "void_t"],
-    misconceptionTags: ["cpp.sfinae_is_not_a_compile_error", "cpp.enable_if_in_return_type_vs_parameter", "cpp.sfinae_applies_only_in_immediate_context"]
+    prerequisites: ["CT04a"],
+    keywords: ["fold expression", "unary fold", "binary fold", "left fold", "right fold", "operator fold", "pack reduction", "C++17"],
+    misconceptionTags: ["cpp.fold_expression_requires_cpp17"]
+  }),
+  createNode({
+    id: "CT05a",
+    title: "SFINAE: substitution failure is not an error and overload set pruning",
+    language: "cpp",
+    track: "cpp-templates",
+    depthTarget: "D3",
+    prerequisites: ["CT01", "CT02"],
+    keywords: ["SFINAE", "substitution failure", "overload resolution", "template overload resolution", "ill-formed expression", "immediate context", "decltype", "trailing return type"],
+    misconceptionTags: ["cpp.sfinae_is_not_a_compile_error", "cpp.sfinae_applies_only_in_immediate_context"]
+  }),
+  createNode({
+    id: "CT05b",
+    title: "enable_if and type_traits: conditional template instantiation",
+    language: "cpp",
+    track: "cpp-templates",
+    depthTarget: "D3",
+    prerequisites: ["CT05a"],
+    keywords: ["enable_if", "enable_if_t", "type_traits", "void_t", "is_integral", "conditional instantiation", "type constraint", "template specialization"],
+    misconceptionTags: ["cpp.enable_if_in_return_type_vs_parameter"]
   }),
   createNode({
     id: "CT06",
@@ -607,7 +647,7 @@ const constexprNodes = [
     language: "cpp",
     track: "cpp-constexpr",
     depthTarget: "D3",
-    prerequisites: ["CK05", "CT04"],
+    prerequisites: ["CK05", "CT04b"],
     keywords: ["template recursion", "TMP", "type computation", "compile-time algorithm", "factorial template", "fibonacci template", "type-level programming"],
     misconceptionTags: ["cpp.tmp_is_turing_complete", "cpp.tmp_replaced_by_constexpr_mostly", "cpp.recursive_template_instantiation_limit"]
   }),
@@ -780,14 +820,24 @@ const concurrencyNodes = [
     misconceptionTags: ["cpp.condition_variable_no_spurious_wakeup", "cpp.notify_before_wait_is_fine", "cpp.condition_variable_requires_unique_lock"]
   }),
   createNode({
-    id: "CC04",
-    title: "std::atomic: operations, compare_exchange, and memory_order",
+    id: "CC04a",
+    title: "std::atomic and lock-free operations: load, store, fetch_add, compare_exchange",
     language: "cpp",
     track: "cpp-concurrency",
     depthTarget: "D3",
     prerequisites: ["CC01"],
-    keywords: ["atomic", "load", "store", "fetch_add", "compare_exchange_strong", "memory_order", "relaxed", "acquire", "release", "seq_cst", "lock-free"],
-    misconceptionTags: ["cpp.atomic_operations_are_always_seq_cst", "cpp.relaxed_ordering_allows_reordering", "cpp.compare_exchange_weak_may_fail_spuriously"]
+    keywords: ["atomic", "std::atomic", "load", "store", "fetch_add", "compare_exchange_weak", "compare_exchange_strong", "lock-free", "ABA problem"],
+    misconceptionTags: ["cpp.compare_exchange_weak_may_fail_spuriously"]
+  }),
+  createNode({
+    id: "CC04b",
+    title: "Memory ordering semantics: acquire-release, sequential consistency, and happens-before",
+    language: "cpp",
+    track: "cpp-concurrency",
+    depthTarget: "D3",
+    prerequisites: ["CC04a"],
+    keywords: ["memory_order", "memory model", "happens-before", "acquire-release", "memory_order_acquire", "memory_order_release", "memory_order_seq_cst", "memory_order_relaxed", "synchronizes-with"],
+    misconceptionTags: ["cpp.atomic_operations_are_always_seq_cst", "cpp.relaxed_ordering_allows_reordering"]
   }),
   createNode({
     id: "CC05",

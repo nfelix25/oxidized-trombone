@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "motivation-structured-clone",
+    "type": "concept",
+    "content": "Structured clone is the engine trick that lets postMessage behave like shared memory without the races: it lets you queue arbitrarily complex graphs while each Worker still believes it owns its own copy. JSON tops out at numbers, strings, and trees; any ArrayBuffer, TypedArray, Map, Set, or cyclic graph forces you to either flatten the data by hand or bounce through shared globals—both are bottlenecks once you need millions of messages per second. With structured clone, the runtime treats a message like a mini object file: typed tags, deterministic traversal order, and a transfer list that can move ownership of huge buffers rather than copying them. That is why browsers and JS shells rely on it to keep UI, network, and storage workers busy without blocking the main loop. In C you wire this up with a narrow API that JS shims call into, e.g.\n```c\nint postmessage_clone(struct sc_context *ctx, const struct sc_value *value,\n                      struct sc_message_record *record)\n{\n    if (sc_context_init(ctx, 64 * 1024))\n        return -1;\n    if (sc_encode_value(ctx, value, &record->encoded))\n        return sc_context_free(ctx);\n    return sc_encode_postmessage_payload(ctx, record, &record->encoded);\n}\n```\nHere the context becomes a scratch arena owned by the runtime, so any Worker can emit a high-volume stream of heterogeneous messages without allocating through the JS heap or stalling on JSON stringify/parse cycles.",
+    "is_complete": false,
+    "next_focus": "Lay out the core structured clone algorithm phases (type tagging, traversal stack, transfer list validation) within the engine’s C/C++ subsystems."
+  }
+}

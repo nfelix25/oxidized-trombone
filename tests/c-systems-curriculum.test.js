@@ -27,15 +27,15 @@ test("getCurriculumForLanguage: c graph contains no rust nodes", () => {
 
 test("getCurriculumForLanguage: c language graph has the expected number of nodes", () => {
   const graph = getCurriculumForLanguage("c");
-  // All language="c" nodes: C systems (45) + JS runtime (70) = 115
-  // C systems: c-pointers(3) + c-ipc(4) + c-signals(2) + c-concurrency(3) + c-networking(3)
-  //   + c-virtual-memory(7) + c-filesystem(5) + c-kqueue-io(7) + c-advanced-concurrency(4)
-  //   + c-dynamic-linking(4) + c-subprocess-signals(3) = 45
-  // JS runtime: JL(9)+JB(6)+JV(8)+JO(7)+JG(8)+JE(8)+JP(6)+JC(5)+JT(7)+JR(6) = 70
+  // All language="c" nodes: C systems (49) + JS runtime (80) = 129
+  // C systems: c-pointers(4) + c-ipc(4) + c-signals(2) + c-concurrency(3) + c-networking(3)
+  //   + c-virtual-memory(7) + c-filesystem(6) + c-kqueue-io(7) + c-advanced-concurrency(4)
+  //   + c-dynamic-linking(4) + c-subprocess-signals(3) = 49
+  // JS runtime: JL(11)+JB(6)+JV(8)+JO(8)+JG(8)+JE(8)+JP(7)+JC(7)+JT(7)+JR(10) = 80
   assert.equal(
     graph.nodes.length,
-    115,
-    `Expected 115 c-language nodes, got ${graph.nodes.length}`
+    129,
+    `Expected 129 c-language nodes, got ${graph.nodes.length}`
   );
 });
 
@@ -53,12 +53,12 @@ test("getCurriculumForLanguage: c-virtual-memory track exists with 7 nodes", () 
   }
 });
 
-test("getCurriculumForLanguage: c-filesystem track exists with 5 nodes", () => {
+test("getCurriculumForLanguage: c-filesystem track exists with 6 nodes", () => {
   const graph = getCurriculumForLanguage("c");
   const fsNodes = graph.nodes.filter((n) => n.track === "c-filesystem");
-  assert.equal(fsNodes.length, 5, `Expected 5 c-filesystem nodes, got ${fsNodes.length}`);
+  assert.equal(fsNodes.length, 6, `Expected 6 c-filesystem nodes, got ${fsNodes.length}`);
   const ids = new Set(fsNodes.map((n) => n.id));
-  for (const expected of ["C400", "C401", "C402", "C403", "C404"]) {
+  for (const expected of ["C400a", "C400b", "C401", "C402", "C403", "C404"]) {
     assert.ok(ids.has(expected), `Missing node ${expected}`);
   }
 });

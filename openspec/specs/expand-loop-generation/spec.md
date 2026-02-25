@@ -66,3 +66,51 @@ The `starter_section_v1`, `test_section_v1`, and `lesson_section_v1` schemas SHA
 #### Scenario: Incomplete section without next_focus still validates
 - **WHEN** a section has `is_complete: false` and an empty `next_focus`
 - **THEN** schema validation accepts it (next_focus is informational, not required)
+
+### Requirement: Starter Sections Include Learner-Facing Orientation Comments
+Every stub function in every starter section SHALL include a comment that orients the learner as a practitioner, not a Codex spec recipient. The comment SHALL state: the exercise unit ID (ex-N), the first principle being practiced, a reference to the LESSON.md section that teaches it, and the name of the test case that will assert it. The comment SHALL end with a "start here" cue pointing to the first concrete action, not a list of implementation requirements.
+
+#### Scenario: Stub comment names the first principle
+- **WHEN** a starter section is generated
+- **THEN** each stub function comment includes "First principle: <concept>" identifying what the learner is practicing
+
+#### Scenario: Stub comment cross-references lesson and test
+- **WHEN** a starter section is generated
+- **THEN** each stub comment references the LESSON.md section that teaches the concept and the test function that will validate the implementation
+
+#### Scenario: Stub comment does not enumerate implementation requirements
+- **WHEN** a starter section is generated
+- **THEN** stub comments do not use "the learner must" phrasing or list implementation steps — orientation only
+
+### Requirement: Starter Sections Pre-Define Constants Required by Tests
+Any constant, flag value, error code, or tag value that a test case will reference SHALL be pre-defined in the stub file or its corresponding header. The learner SHALL be able to read the entire contract of a stub from the starter file alone, without opening the test file.
+
+#### Scenario: Test-referenced flags defined in header
+- **WHEN** a test case references a flag constant (e.g., TRANSFER_FLAG_REGISTERED)
+- **THEN** that constant is defined in the corresponding stub header or source file, visible to the learner before they inspect the test
+
+#### Scenario: Stub file is self-contained
+- **WHEN** a learner reads only the stub source and header files
+- **THEN** they can identify the full contract (function signature, expected error codes, relevant constants) without opening the test file
+
+### Requirement: Lesson Sections Are Directly Enabling
+Each lesson section SHALL be written to directly prepare the learner to implement one or more named stub functions. Every lesson section SHALL include a worked example that demonstrates the exact pattern the learner will apply. The section SHALL reference the stub it enables by function name so the learner can move directly from reading to implementing.
+
+#### Scenario: Lesson section includes worked example for the target stub
+- **WHEN** a lesson section is generated for exercise ex-N
+- **THEN** the section includes a complete worked example demonstrating the pattern the learner will apply in the corresponding stub, before asking them to implement it
+
+#### Scenario: Lesson section names the stub it enables
+- **WHEN** a lesson section is generated
+- **THEN** the section references the stub function(s) it directly enables by name, so the learner knows which stub to open after reading
+
+### Requirement: Test Cases Target Individual Stubs with Assertion-Stating Names
+Each test case SHALL target exactly one stub function. Test function names SHALL describe the assertion being made, not just the function under test. Test cases SHALL be ordered to match the progressive composition order of the stubs they target.
+
+#### Scenario: Test name describes the assertion
+- **WHEN** a test section is generated
+- **THEN** test function names follow the pattern `test_<function>_<assertion>` (e.g., `test_context_init_zeroes_arena`, not `test_context_init_1`)
+
+#### Scenario: Each test targets one stub
+- **WHEN** a test section targets stub ex-N
+- **THEN** the test function exercises exactly one stub function's behavior, not multiple stubs in sequence
