@@ -1,0 +1,42 @@
+{
+  "schema_version": "scaffold_v1",
+  "role": "scaffold",
+  "scaffold_id": "sc_c200_d2_001",
+  "node_id": "C200",
+  "depth_target": "D2",
+  "lesson_plan": {
+    "section_intents": [
+      "hook: motivate pointer arithmetic with a real array traversal scenario",
+      "concept: explain pointer arithmetic rules — incrementing past array bounds is UB",
+      "concept: array-to-pointer decay and what it means for function parameters",
+      "worked_example: traverse an int array using pointer arithmetic vs index notation",
+      "worked_example: pass array as pointer to function, show decay in action",
+      "pitfall: off-by-one in pointer arithmetic causes UB — show compiler warning and sanitizer output",
+      "concept: restrict qualifier — aliasing assumptions and when to use it",
+      "concept: const-correctness — const T* vs T* const vs const T* const",
+      "comparison: C const-correctness vs Rust borrow rules",
+      "bridge: connect pointer semantics to dynamic memory in the next exercise"
+    ]
+  },
+  "starter_plan": {
+    "file_intents": [
+      "src/pointers.h: header with function declarations for pointer utility stubs",
+      "src/pointers.c: pointer arithmetic stubs — ptr_sum, ptr_find, ptr_reverse",
+      "src/constness.c: const-correctness stubs — count_chars, copy_restrict"
+    ]
+  },
+  "test_plan": {
+    "case_intents": [
+      "tests/test_pointers.c: test ptr_sum returns correct sum over int array",
+      "tests/test_pointers.c: test ptr_sum with single-element array",
+      "tests/test_pointers.c: test ptr_find returns pointer to first match",
+      "tests/test_pointers.c: test ptr_find returns NULL when element not present",
+      "tests/test_pointers.c: test ptr_reverse reverses array in place",
+      "tests/test_pointers.c: test ptr_reverse on single-element array leaves it unchanged",
+      "tests/test_constness.c: test count_chars counts occurrences in a const string",
+      "tests/test_constness.c: test copy_restrict copies n bytes without overlap",
+      "tests/test_constness.c: test copy_restrict with length 0 is a no-op"
+    ]
+  },
+  "exercise_description": "Implement pointer arithmetic utilities (ptr_sum, ptr_find, ptr_reverse) and const-correct helpers (count_chars, copy_restrict), demonstrating array decay, const qualifiers, and restrict."
+}

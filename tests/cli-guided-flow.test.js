@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { seedCurriculum } from "../src/curriculum/seed.js";
+import { allCurricula as seedCurriculum } from "../src/curriculum/allCurricula.js";
 import { getEligibleNextNodes, narrowTrack } from "../src/curriculum/selectors.js";
 import { createAttemptState, recordAttempt, recordHintUsage, recordReviewOutcome } from "../src/runtime/attempts.js";
 import { extractAttemptEvidence } from "../src/runtime/reviewIntegration.js";
@@ -11,15 +11,24 @@ import { assertAccepted, isAccepted, toMachineError, StageRejectedError } from "
 import { validateCurriculumGraph } from "../src/curriculum/model.js";
 
 test("guided flow: eligible nodes shown, blocked nodes with prerequisites", () => {
-  // Learner has mastered A200 but not A202
-  const masteryByNode = { A200: 3 };
+  // S100 is the true entry point (no prereqs). A200 needs S104 (which needs S100).
+  // Eligible = all prerequisites met (includes already-mastered nodes).
+  const masteryByNode = { S100: 3, S104: 3, A200: 3 };
   const eligible = getEligibleNextNodes(seedCurriculum, masteryByNode);
   const eligibleIds = eligible.map((n) => n.id);
 
-  assert.ok(eligibleIds.includes("A200"), "A200 should be eligible (no prereqs)");
+  // S100 has no prereqs so it remains eligible even when mastered
+  assert.ok(eligibleIds.includes("S100"), "S100 should be eligible (no prereqs)");
+  assert.ok(eligibleIds.includes("A200"), "A200 should be eligible (S104 satisfied)");
   assert.ok(eligibleIds.includes("A201"), "A201 should be eligible (only needs A200)");
   assert.ok(eligibleIds.includes("A202"), "A202 should be eligible (only needs A200)");
-  assert.ok(!eligibleIds.includes("A203"), "A203 should be blocked (needs A202)");
+  assert.ok(!eligibleIds.includes("A203"), "A203 should be blocked (needs A202 which is unmastered)");
+
+  // With empty mastery, only nodes with no prerequisites are eligible
+  const emptyEligible = getEligibleNextNodes(seedCurriculum, {});
+  const emptyIds = emptyEligible.map((n) => n.id);
+  assert.ok(emptyIds.includes("S100"), "S100 should be eligible with no mastery (true entry point)");
+  assert.ok(!emptyIds.includes("A200"), "A200 should be blocked with no mastery (requires S104)");
 
   const foundationsNodes = narrowTrack(seedCurriculum, "foundations", masteryByNode);
   const a203Entry = foundationsNodes.find((n) => n.id === "A203");

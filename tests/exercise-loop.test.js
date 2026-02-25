@@ -3,44 +3,91 @@ import assert from "node:assert/strict";
 import os from "node:os";
 import path from "node:path";
 import { promises as fs } from "node:fs";
-import { setupExercise, runAttempt, requestHint, requestReview } from "../src/session/exerciseLoop.js";
+import { setupExercise, runAttempt, requestHint, requestReview, runExpandLoop } from "../src/session/exerciseLoop.js";
 import { createNewSession } from "../src/session/session.js";
+import { getNode } from "../src/curriculum/model.js";
+import { allCurricula as seedCurriculum } from "../src/curriculum/allCurricula.js";
 
 // ---------------------------------------------------------------------------
 // Fixtures (schema-valid fallback payloads for each stage)
 // ---------------------------------------------------------------------------
 
-const PLANNER_PAYLOAD = {
-  schema_version: "lesson_plan_v1",
-  role: "planner",
-  plan_id: "lp_test_a200",
+const SCAFFOLD_PAYLOAD = {
+  schema_version: "scaffold_v1",
+  role: "scaffold",
+  scaffold_id: "sc_test_a200",
   node_id: "A200",
   depth_target: "D2",
-  objective: "Understand ownership transfer at function boundaries",
-  misconception_focus: ["own.move.after_move_use"],
-  lesson_outline: [{ step: 1, title: "Ownership transfer on call" }],
-  assessment_plan: { assessment_type: "coding_exercise" },
-  next_action: "generate_exercise"
+  lesson_plan: {
+    section_intents: ["concept: ownership transfer", "bridge: connect to exercise"]
+  },
+  starter_plan: {
+    file_intents: ["src/lib.rs: stub take_and_return"]
+  },
+  test_plan: {
+    case_intents: ["tests/tests.rs: test take_and_return returns same string"]
+  },
+  exercise_description: "Implement take_and_return which takes a String by value and returns it."
 };
 
-const AUTHOR_PAYLOAD = {
-  schema_version: "exercise_pack_v1",
-  role: "author",
-  exercise_id: "ex_test_a200",
-  node_id: "A200",
-  depth_target: "D2",
-  objective: "Write a function that takes ownership and returns it",
-  starter_files: [{ path: "src/lib.rs", content: "pub fn id(s: String) -> String { s }\n" }],
-  test_files: [{ path: "tests/tests.rs", content: "#[test]\nfn test_id() { assert_eq!(super::id(String::from(\"hi\")), \"hi\"); }\n" }],
-  run_instructions: { commands: ["cargo test -q"] },
-  hint_policy: { max_hint_level: 3, reveal_allowed_before_threshold: false }
+const STARTER_SECTION_PAYLOAD = {
+  schema_version: "starter_section_v1",
+  role: "starter-expand",
+  section_id: "ss_test_s1",
+  type: "function_stub",
+  file_path: "lib.rs",
+  content: "pub fn take_and_return(s: String) -> String {\n    todo!()\n}\n",
+  is_complete: false,
+  next_focus: "Add implementation body"
+};
+
+const STARTER_SECTION_FINAL = {
+  schema_version: "starter_section_v1",
+  role: "starter-expand",
+  section_id: "ss_test_final",
+  type: "function_impl",
+  file_path: "lib.rs",
+  content: "pub fn take_and_return(s: String) -> String {\n    s\n}\n",
+  is_complete: true,
+  next_focus: ""
+};
+
+const TEST_SECTION_FINAL = {
+  schema_version: "test_section_v1",
+  role: "test-expand",
+  section_id: "ts_test_final",
+  type: "unit_test",
+  file_path: "tests.rs",
+  content: "#[test]\nfn test_take_and_return() { assert_eq!(take_and_return(String::from(\"hi\")), \"hi\"); }\n",
+  is_complete: true,
+  next_focus: ""
+};
+
+const LESSON_SECTION_PAYLOAD = {
+  schema_version: "lesson_section_v1",
+  role: "lesson-expand",
+  section_id: "ls_test_s1",
+  type: "concept",
+  content: "## Ownership Transfer\nIn Rust, every value has a single owner.",
+  is_complete: false,
+  next_focus: "Add a bridge section"
+};
+
+const LESSON_SECTION_FINAL = {
+  schema_version: "lesson_section_v1",
+  role: "lesson-expand",
+  section_id: "ls_test_bridge",
+  type: "bridge",
+  content: "## Bridge to Exercise\nApply ownership transfer in take_and_return.",
+  is_complete: true,
+  next_focus: ""
 };
 
 const REVIEWER_PAYLOAD_PASS = {
   schema_version: "review_report_v1",
   role: "reviewer",
   report_id: "rr_test_pass",
-  exercise_id: "ex_test_a200",
+  exercise_id: "sc_test_a200",
   node_id: "A200",
   depth_target: "D2",
   attempt_index: 1,
@@ -54,7 +101,7 @@ const REVIEWER_PAYLOAD_FAIL = {
   schema_version: "review_report_v1",
   role: "reviewer",
   report_id: "rr_test_fail",
-  exercise_id: "ex_test_a200",
+  exercise_id: "sc_test_a200",
   node_id: "A200",
   depth_target: "D2",
   attempt_index: 1,
@@ -68,7 +115,7 @@ const COACH_PAYLOAD_L1 = {
   schema_version: "hint_pack_v1",
   role: "coach",
   hint_id: "hp_test_l1",
-  exercise_id: "ex_test_a200",
+  exercise_id: "sc_test_a200",
   node_id: "A200",
   depth_target: "D2",
   attempt_index: 1,
@@ -76,7 +123,8 @@ const COACH_PAYLOAD_L1 = {
   dominant_tag: "own.move.after_move_use",
   allowed_reveal: false,
   current_hint: { style: "nudge", text: "Remember: returning a value transfers ownership back to the caller." },
-  full_solution_provided: false
+  full_solution_provided: false,
+  revealed_solution: null
 };
 
 const COACH_PAYLOAD_L2 = {
@@ -101,11 +149,11 @@ function makeSessionWithExercise(overrides = {}) {
   const base = createNewSession("guided", "A200");
   return {
     ...base,
-    exerciseId: "ex_test_a200",
-    exercisePack: AUTHOR_PAYLOAD,
+    exerciseId: "sc_test_a200",
+    lessonFile: "/tmp/fake_ws/LESSON.md",
     workspaceDir: "/tmp/fake_ws",
     attemptState: {
-      exerciseId: "ex_test_a200",
+      exerciseId: "sc_test_a200",
       attemptIndex: 0,
       hintLevelUsed: 0,
       elapsedMinutes: 0,
@@ -118,22 +166,23 @@ function makeSessionWithExercise(overrides = {}) {
 }
 
 // ---------------------------------------------------------------------------
-// Test 5.1 — setupExercise triggers planner + author and persists exercise state
+// Test — setupExercise runs scaffold + three loops and returns session with lessonFile
 // ---------------------------------------------------------------------------
 
-test("exercise loop: setupExercise runs planner + author and returns session with exercise state", async () => {
+test("exercise loop: setupExercise runs scaffold + loops and returns session with lessonFile", async () => {
   const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "ox-test-setup-"));
 
   try {
     const session = createNewSession("guided", "A200");
 
     const updated = await setupExercise(session, {
-      plannerOptions: { fallback: true, fallbackPayload: PLANNER_PAYLOAD },
-      authorOptions: { fallback: true, fallbackPayload: AUTHOR_PAYLOAD },
+      scaffoldOptions: { fallback: true, fallbackPayload: SCAFFOLD_PAYLOAD },
+      starterOptions: { fallback: true, fallbackPayload: STARTER_SECTION_FINAL },
+      testOptions: { fallback: true, fallbackPayload: TEST_SECTION_FINAL },
+      lessonOptions: { fallback: true, fallbackPayload: LESSON_SECTION_FINAL },
       createWorkspaceFn: async (sessionId, nodeId) => {
         const dir = path.join(tmpDir, `${sessionId.slice(0, 8)}_${nodeId}`);
         await fs.mkdir(dir, { recursive: true });
-        // Create required subdirectories so materializeExercise can write files
         await fs.mkdir(path.join(dir, "src"), { recursive: true });
         await fs.mkdir(path.join(dir, "tests"), { recursive: true });
         return { dir, sessionId, nodeId };
@@ -141,42 +190,105 @@ test("exercise loop: setupExercise runs planner + author and returns session wit
     });
 
     assert.ok(updated !== null, "setupExercise should return updated session");
-    assert.equal(updated.exerciseId, "ex_test_a200", "exerciseId should be set");
-    assert.ok(updated.exercisePack !== null, "exercisePack should be set");
+    assert.equal(updated.exerciseId, "sc_test_a200", "exerciseId derived from scaffold_id");
+    assert.ok(updated.lessonFile !== null, "lessonFile should be set");
+    assert.ok(updated.lessonFile.endsWith("LESSON.md"), "lessonFile should point to LESSON.md");
     assert.ok(updated.workspaceDir !== null, "workspaceDir should be set");
     assert.ok(updated.attemptState !== null, "attemptState should be initialized");
-    assert.equal(updated.attemptState.exerciseId, "ex_test_a200");
+    assert.equal(updated.attemptState.exerciseId, "sc_test_a200");
     assert.equal(updated.attemptState.attemptIndex, 0);
+
+    // Verify LESSON.md was written
+    const lessonContent = await fs.readFile(updated.lessonFile, "utf8");
+    assert.ok(lessonContent.includes("Bridge to Exercise"), "LESSON.md should contain lesson section content");
   } finally {
     await fs.rm(tmpDir, { recursive: true, force: true });
   }
 });
 
 // ---------------------------------------------------------------------------
-// Test 5.1b — setupExercise failure does not return a session
+// Test — setupExercise returns null when scaffold stage fails
 // ---------------------------------------------------------------------------
 
-test("exercise loop: setupExercise stage failure returns null (no session persisted)", async () => {
+test("exercise loop: setupExercise returns null when scaffold stage fails", async () => {
   const originalExitCode = process.exitCode;
   process.exitCode = 0;
 
   const session = createNewSession("guided", "A200");
 
   const updated = await setupExercise(session, {
-    plannerOptions: {
+    scaffoldOptions: {
       fallback: true
       // no fallbackPayload → EXECUTION_FAILED
     }
   });
 
-  assert.equal(updated, null, "should return null when planner fails");
-  assert.equal(process.exitCode, 1, "exitCode should be 1 on stage failure");
+  assert.equal(updated, null, "should return null when scaffold fails");
+  assert.equal(process.exitCode, 1, "exitCode should be 1 on scaffold failure");
 
   process.exitCode = originalExitCode;
 });
 
 // ---------------------------------------------------------------------------
-// Test 5.2 — runAttempt updates mastery after a passing run
+// Tests for runExpandLoop
+// ---------------------------------------------------------------------------
+
+test("runExpandLoop: terminates when is_complete: true returned on first call", async () => {
+  const session = createNewSession("guided", "A200");
+  const node = getNode(seedCurriculum, "A200");
+
+  const sections = await runExpandLoop(
+    "starter",
+    SCAFFOLD_PAYLOAD,
+    [],
+    session,
+    node,
+    { starter: { fallback: true, fallbackPayload: STARTER_SECTION_FINAL } }
+  );
+
+  assert.ok(sections !== null, "should return sections array");
+  assert.equal(sections.length, 1, "should terminate after one call with is_complete: true");
+  assert.equal(sections[0].is_complete, true);
+});
+
+test("runExpandLoop: respects MAX_ITERATIONS cap when is_complete never true", async () => {
+  const session = createNewSession("guided", "A200");
+  const node = getNode(seedCurriculum, "A200");
+  // A200 has depthTarget D3, starter max = 9
+
+  const sections = await runExpandLoop(
+    "starter",
+    SCAFFOLD_PAYLOAD,
+    [],
+    session,
+    node,
+    { starter: { fallback: true, fallbackPayload: STARTER_SECTION_PAYLOAD } }
+  );
+
+  assert.ok(sections !== null, "should return sections array");
+  assert.equal(sections.length, 9, "should cap at D3 starter MAX_ITERATIONS (9)");
+  // All sections have is_complete: false (loop hit cap, not completion signal)
+  assert.ok(sections.every((s) => !s.is_complete));
+});
+
+test("runExpandLoop: returns null on expand stage failure", async () => {
+  const session = createNewSession("guided", "A200");
+  const node = getNode(seedCurriculum, "A200");
+
+  const sections = await runExpandLoop(
+    "starter",
+    SCAFFOLD_PAYLOAD,
+    [],
+    session,
+    node,
+    { starter: { fallback: true } } // no fallbackPayload → EXECUTION_FAILED
+  );
+
+  assert.equal(sections, null, "should return null when expand stage fails");
+});
+
+// ---------------------------------------------------------------------------
+// Test — runAttempt updates mastery after a passing run
 // ---------------------------------------------------------------------------
 
 test("exercise loop: runAttempt records attempt and updates mastery on PASS", async () => {
@@ -224,7 +336,6 @@ test("exercise loop: runAttempt preserves attempt record when reviewer stage fai
     reviewerOptions: { fallback: true } // no payload → EXECUTION_FAILED
   });
 
-  // Attempt should be preserved even when reviewer fails
   assert.ok(updated !== null, "should return session with attempt recorded");
   assert.equal(updated.attemptState.attemptIndex, 1, "attempt should be recorded");
   assert.equal(updated.attemptState.history.length, 1);
@@ -233,7 +344,7 @@ test("exercise loop: runAttempt preserves attempt record when reviewer stage fai
 });
 
 // ---------------------------------------------------------------------------
-// Test 5.3 — requestHint advances hint level and caps at L3
+// Test — requestHint advances hint level and caps at L3
 // ---------------------------------------------------------------------------
 
 test("exercise loop: requestHint increments hintLevelUsed L0 → L1 → L2 → L3", async () => {
@@ -270,14 +381,13 @@ test("exercise loop: requestHint increments hintLevelUsed L0 → L1 → L2 → L
     coachOptions: { fallback: true, fallbackPayload: COACH_PAYLOAD_L3 }
   });
   assert.equal(capped, null, "should return null when already at L3");
-  // hintLevelUsed stays 3 (session unchanged because null returned)
   assert.equal(session.attemptState.hintLevelUsed, 3, "hintLevelUsed unchanged after cap");
 });
 
 test("exercise loop: requestHint calls coach at correct hint_level", async () => {
   const session = makeSessionWithExercise({
     attemptState: {
-      exerciseId: "ex_test_a200",
+      exerciseId: "sc_test_a200",
       attemptIndex: 1,
       hintLevelUsed: 1,
       elapsedMinutes: 0,
@@ -311,7 +421,7 @@ test("exercise loop: requestHint calls coach at correct hint_level", async () =>
 test("exercise loop: requestReview displays latest review without re-running reviewer", () => {
   const session = makeSessionWithExercise({
     attemptState: {
-      exerciseId: "ex_test_a200",
+      exerciseId: "sc_test_a200",
       attemptIndex: 1,
       hintLevelUsed: 0,
       elapsedMinutes: 0,
@@ -321,6 +431,16 @@ test("exercise loop: requestReview displays latest review without re-running rev
     }
   });
 
-  // requestReview is sync — just verify it doesn't throw
   assert.doesNotThrow(() => requestReview(session));
+});
+
+// ---------------------------------------------------------------------------
+// Test — new session shape
+// ---------------------------------------------------------------------------
+
+test("session: new session has lessonFile: null (not lessonContent)", () => {
+  const session = createNewSession("guided", "A200");
+  assert.equal(session.lessonFile, null, "new session should have lessonFile: null");
+  assert.equal(session.lessonContent, undefined, "new session should not have lessonContent field");
+  assert.equal(session.exercisePack, undefined, "new session should not have exercisePack field");
 });

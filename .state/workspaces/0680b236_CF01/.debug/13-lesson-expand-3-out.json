@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "tooling_auto_diagnostics",
+    "type": "concept",
+    "content": "Modern compilers will happily show what `auto` deduced if you ask. Pair a quick probe program with diagnostics flags to surface mismatches early:\n```cpp\n#include <type_traits>\n#include <iostream>\n\ntemplate <typename T>\nvoid inspect(const char* label, const T&) {\n  std::cout << label << \" -> \" << __PRETTY_FUNCTION__ << '\\n';\n}\n\nint main() {\n  auto samples = {42, 3.14};   // deduces std::initializer_list<double>\n  auto flag = '1' - '0';        // deduces int after char arithmetic\n  const int counts[] = {1, 2, 3};\n  for (const auto& c : counts) { inspect(\"loop var\", c); }\n  inspect(\"flag\", flag);\n}\n```\nCompiling with `clang++ -std=c++20 -Wall -Wconversion deduce.cpp` emits both the pretty-function strings and any conversion warnings. For example, `deduce.cpp:5:17: warning: implicit conversion changes signedness` immediately flags where an `auto` variable quietly changed representation. GCC lacks `__PRETTY_FUNCTION__` detail, so add `static_assert(std::is_same_v<decltype(flag), int>);` or use `-fdump-lang-class` to inspect AST nodes. IDEs such as VS Code (clangd) or CLion expose the deduced type when you hover over the variable name—verify that hover output matches `decltype` checks so you don’t trust stale UI caches. Treat diagnostics as part of the workflow: run with `-Wconversion -Wshadow` whenever you add `auto`, and wire `typeid(variable).name()` prints or `std::same_as` assertions into your unit tests so regression suites scream the moment inference stops matching the spec. That tooling feedback loop keeps type inference observable instead of mystical.",
+    "is_complete": false,
+    "next_focus": "Worked Example 1: Use range-based for loops with `auto` iterators and `const auto&` to preserve immutability."
+  }
+}

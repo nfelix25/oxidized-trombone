@@ -10,5 +10,6 @@
   "dominant_tag": "borrow.two_mut_refs",
   "allowed_reveal": false,
   "current_hint": {"style": "directive", "text": "Shorten mutable borrow scope"},
-  "full_solution_provided": false
+  "full_solution_provided": false,
+  "revealed_solution": null
 }

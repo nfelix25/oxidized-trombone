@@ -6,10 +6,9 @@ export function buildCodexExecArgs({
   outputPath,
   cwd,
   model,
-  sandbox = "workspace-write",
-  approval = "never"
+  sandbox = "workspace-write"
 }) {
-  const args = ["exec", "--sandbox", sandbox, "--ask-for-approval", approval];
+  const args = ["exec", "--sandbox", sandbox, "--full-auto"];
   if (cwd) args.push("--cd", cwd);
   if (model) args.push("--model", model);
   if (schemaPath) args.push("--output-schema", schemaPath);
@@ -25,7 +24,6 @@ export function runCodexExec({
   cwd,
   model,
   sandbox,
-  approval,
   stdinPayload,
   command = "codex"
 }) {
@@ -35,8 +33,7 @@ export function runCodexExec({
     outputPath,
     cwd,
     model,
-    sandbox,
-    approval
+    sandbox
   });
 
   return new Promise((resolve, reject) => {

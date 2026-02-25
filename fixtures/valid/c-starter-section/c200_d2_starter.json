@@ -1,0 +1,10 @@
+{
+  "schema_version": "starter_section_v1",
+  "role": "starter-expand",
+  "section_id": "ss_c200_d2_s1",
+  "type": "function_stub",
+  "file_path": "pointers.c",
+  "content": "#include \"pointers.h\"\n#include <stddef.h>\n\n/*\n * ptr_sum — Pointer arithmetic: summing an array\n *\n * Walk the array using pointer arithmetic (not index notation) and return\n * the sum of all elements. Demonstrates that p++ advances by sizeof(*p)\n * bytes, not by 1 byte.\n *\n * Learner must: replace the return statement with a loop using p++ to\n * accumulate the sum.\n */\nint ptr_sum(const int *arr, size_t len) {\n    return 0; /* placeholder */\n}\n\n/*\n * ptr_find — Return a pointer to the first element equal to target.\n *\n * Uses pointer comparison (p < arr + len) to bound the scan.\n * Returns NULL if not found. Demonstrates decay: arr decays to int*.\n *\n * Learner must: implement the scan returning the correct pointer or NULL.\n */\nint *ptr_find(int *arr, size_t len, int target) {\n    return NULL; /* placeholder */\n}\n\n/*\n * ptr_reverse — Reverse an int array in place using two pointers.\n *\n * Classic two-pointer swap pattern. Neither pointer should go out of bounds.\n *\n * Learner must: implement the swap loop with lo/hi pointer walk.\n */\nvoid ptr_reverse(int *arr, size_t len) {\n    /* placeholder — no-op */\n}\n",
+  "is_complete": false,
+  "next_focus": "Write constness.c with count_chars and copy_restrict stubs"
+}

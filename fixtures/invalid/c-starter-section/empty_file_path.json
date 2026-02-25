@@ -1,0 +1,14 @@
+{
+  "schemaName": "starter_section_v1",
+  "packet": {},
+  "payload": {
+    "schema_version": "starter_section_v1",
+    "role": "starter-expand",
+    "section_id": "ss_invalid_c_001",
+    "type": "function_stub",
+    "file_path": "",
+    "content": "#include <stdio.h>\nvoid stub(void) {}\n",
+    "is_complete": false,
+    "next_focus": ""
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": "context_packet_v1",
+  "packet_id": "a207dd7e-3351-405e-a767-52adafc2b72f",
+  "timestamp_utc": "2026-02-24T20:09:29.167Z",
+  "role": "scaffold",
+  "task_type": "session_scaffold",
+  "learner_profile": {
+    "masteryLevel": 0
+  },
+  "curriculum_context": {
+    "node_id": "C200",
+    "title": "Pointer arithmetic, decay, restrict, and const-correctness",
+    "track": "c-pointers",
+    "depth_target": "D2",
+    "keywords": [
+      "pointer",
+      "pointer arithmetic",
+      "array decay",
+      "restrict",
+      "const",
+      "const-correctness",
+      "void*",
+      "NULL"
+    ],
+    "misconception_tags": [
+      "c.ptr_arithmetic_ub",
+      "c.array_decay_confusion",
+      "c.const_ptr_confusion"
+    ]
+  },
+  "misconception_context": {
+    "top_tags": []
+  },
+  "attempt_context": null,
+  "evidence_context": null,
+  "policy_context": {
+    "allow_reveal": false
+  },
+  "memory_context": {}
+}

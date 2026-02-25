@@ -1,0 +1,14 @@
+{
+  "accepted": true,
+  "schemaName": "starter_section_v1",
+  "payload": {
+    "schema_version": "starter_section_v1",
+    "role": "starter-expand",
+    "section_id": "pointer_ops.h",
+    "type": "code",
+    "file_path": "pointer_ops.h",
+    "content": "#ifndef POINTER_OPS_H\n#define POINTER_OPS_H\n\n#include <stddef.h>\n\n/* Compute the ptrdiff_t distance between two int pointers read from the same buffer so learners must verify cursor stays within element_count slots before subtracting. */\nstatic inline ptrdiff_t pointer_offset_diff(const int *base,\n                                            size_t element_count,\n                                            const int *cursor)\n{\n    (void)base;\n    (void)element_count;\n    (void)cursor;\n\n    return 0;\n}\n\n/* Add a signed byte offset to a POSIX read buffer without escaping its byte_len boundary, returning NULL when callers would wrap past the allocation. */\nstatic inline unsigned char *safe_ptr_add(unsigned char *base,\n                                          size_t byte_len,\n                                          ptrdiff_t byte_offset)\n{\n    (void)base;\n    (void)byte_len;\n    (void)byte_offset;\n\n    return NULL;\n}\n\n/* Demonstrate array-to-pointer decay by exposing a const view of a row while asserting the source has at least four rows before handing back the pointer. */\nstatic inline const unsigned char *array_decay_to_const(const unsigned char (*grid)[4],\n                                                        size_t rows,\n                                                        size_t row_index)\n{\n    (void)grid;\n    (void)rows;\n    (void)row_index;\n\n    return NULL;\n}\n\n/* Guard against pointer wraparound by reporting a signed distance: negative when candidate precedes base and positive only when it sits within span bytes. */\nstatic inline ptrdiff_t wraparound_guard(const unsigned char *base,\n                                         size_t span,\n                                         const unsigned char *candidate)\n{\n    (void)base;\n    (void)span;\n    (void)candidate;\n\n    return 0;\n}\n\n#endif /* POINTER_OPS_H */\n",
+    "is_complete": true,
+    "next_focus": "Starter scaffolding complete; learners can begin implementing pointer helpers."
+  }
+}

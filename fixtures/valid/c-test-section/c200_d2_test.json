@@ -1,0 +1,10 @@
+{
+  "schema_version": "test_section_v1",
+  "role": "test-expand",
+  "section_id": "ts_c200_d2_s1",
+  "type": "unit_test",
+  "file_path": "test_pointers.c",
+  "content": "#include \"test.h\"\n#include \"pointers.h\"\n\nstatic void test_ptr_sum_basic(void) {\n    int arr[] = {1, 2, 3, 4, 5};\n    TEST_ASSERT_EQ(ptr_sum(arr, 5), 15);\n}\n\nstatic void test_ptr_sum_single(void) {\n    int arr[] = {42};\n    TEST_ASSERT_EQ(ptr_sum(arr, 1), 42);\n}\n\nstatic void test_ptr_find_present(void) {\n    int arr[] = {10, 20, 30, 40};\n    int *p = ptr_find(arr, 4, 30);\n    TEST_ASSERT(p != NULL);\n    TEST_ASSERT_EQ(*p, 30);\n}\n\nstatic void test_ptr_find_absent(void) {\n    int arr[] = {10, 20, 30};\n    int *p = ptr_find(arr, 3, 99);\n    TEST_ASSERT(p == NULL);\n}\n\nstatic void test_ptr_reverse_basic(void) {\n    int arr[] = {1, 2, 3, 4, 5};\n    ptr_reverse(arr, 5);\n    TEST_ASSERT_EQ(arr[0], 5);\n    TEST_ASSERT_EQ(arr[2], 3);\n    TEST_ASSERT_EQ(arr[4], 1);\n}\n\nstatic void test_ptr_reverse_single(void) {\n    int arr[] = {7};\n    ptr_reverse(arr, 1);\n    TEST_ASSERT_EQ(arr[0], 7);\n}\n\nint main(void) {\n    RUN_TEST(test_ptr_sum_basic);\n    RUN_TEST(test_ptr_sum_single);\n    RUN_TEST(test_ptr_find_present);\n    RUN_TEST(test_ptr_find_absent);\n    RUN_TEST(test_ptr_reverse_basic);\n    RUN_TEST(test_ptr_reverse_single);\n    TEST_SUMMARY();\n}\n",
+  "is_complete": false,
+  "next_focus": "Write test_constness.c covering count_chars and copy_restrict"
+}

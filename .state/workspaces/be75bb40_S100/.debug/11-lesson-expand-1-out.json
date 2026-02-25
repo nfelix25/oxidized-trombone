@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "section-1",
+    "type": "concept",
+    "content": "Imagine your smart thermostat, ThermoTrack-7, trying to brief you on a blustery February day in Denver. It has just three seconds to capture the morning chill, the toastier afternoon bump, and a cautious humidity reading before deciding whether to preheat the living room or kick on the dehumidifier. If any of those readings wobble—say the afternoon warmth mistakenly overwrites the morning baseline—the whole schedule drifts, wasting energy just when you needed precision. Telling this story in Rust forces us to treat every snapshot as a deliberate binding, not a casual log entry.\n```rust\nlet morning_celsius: f64 = 19.5;            // immutable anchor for the daily baseline\nlet afternoon_celsius = morning_celsius + 2.3; // inferred f64, derived from the baseline\nlet humidity_percent: u8 = 42;               // discrete sensor channel with explicit bounds\nlet report = format!(\n    \"ThermoTrack-7 report -> morning: {:.1}°C, afternoon: {:.1}°C, humidity: {}%\",\n    morning_celsius,\n    afternoon_celsius,\n    humidity_percent\n);\nprintln!(\"{report}\");\n```\nThat single printout hints at the discipline we’ll practice next: guarding immutable facts, opting into mutation only when the story demands a new event, and trusting Rust’s type inference to keep every metric honest before we graduate into full control-flow routines.",
+    "is_complete": false,
+    "next_focus": "Establish fundamentals of `let`, `mut`, and `const`, highlighting Rust’s default immutability and type inference rules."
+  }
+}

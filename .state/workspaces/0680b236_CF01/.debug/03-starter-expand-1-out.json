@@ -1,0 +1,14 @@
+{
+  "accepted": true,
+  "schemaName": "starter_section_v1",
+  "payload": {
+    "schema_version": "starter_section_v1",
+    "role": "starter-expand",
+    "section_id": "type_workshop_h",
+    "type": "code",
+    "file_path": "type_workshop.h",
+    "content": "#pragma once\n\n#include <optional>\n\nnamespace type_workshop {\n\n/// Demonstrates `auto` return type deduction by summing mixed primitive values.\n/// @param lhs First addend supplied as any arithmetic type to show template argument deduction.\n/// @param rhs Second addend supplied as any arithmetic type, possibly with higher precision.\n/// @return The deduced common type produced by lhs + rhs, letting learners trace promotions.\n/// @note Learners must implement safe addition logic that preserves precision without narrowing.\ntemplate <typename T, typename U>\nauto inferSumType(const T& lhs, const U& rhs) -> decltype(lhs + rhs);\n\n/// Highlights const-correctness by forwarding stable references and preventing dangling bindings.\n/// @param value Immutable source object that should be returned as a const reference.\n/// @return A const reference that keeps every qualifier (const, volatile, reference) intact.\n/// @note Learners must ensure temporaries are rejected or extended safely while preserving qualifiers.\ntemplate <typename T>\nconst T& preserveConstRef(const T& value);\n\n/// Explores character-to-boolean inference rules with ASCII digits and defensive defaults.\n/// @param digit Character that may describe a '0'/'1' flag or other sentinel input.\n/// @return True/false according to the learner-defined mapping, defaulting safely for invalid chars.\n/// @note Learners must guard against undefined behavior by validating digits before deduction.\nbool boolFlagFromChar(char digit);\n\n/// Connects `std::optional` with explicit character outputs to avoid implicit bool-to-char casts.\n/// @param flag Optional boolean sourced from diagnostics or configuration data.\n/// @return 'T'/'F' (or a learner-chosen fallback) conveying the optional state without ambiguity.\n/// @note Learners must cover engaged/empty optionals and document how auto interacts with conditionals.\nchar charFromBool(const std::optional<bool>& flag);\n\n}  // namespace type_workshop\n",
+    "is_complete": false,
+    "next_focus": "type_workshop.cpp"
+  }
+}

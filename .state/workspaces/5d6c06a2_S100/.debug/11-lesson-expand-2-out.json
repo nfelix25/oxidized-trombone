@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "section_let_mut_const",
+    "type": "concept",
+    "content": "Rust uses one spelling—`let`—for introducing fresh bindings, and then layers extra signals onto it. A plain declaration such as `let indoor = 72;` is immutable: the compiler infers the type (`i32` by default for integer literals) and locks the value. Try to reassign and you get `cannot assign twice to immutable variable`. When you truly need state to evolve, you opt in explicitly: \n```rust\nlet mut fan_speed = 3; // type inferred as i32\nfan_speed += 1;        // legal because of `mut`\n```\nNotice that type inference still applies; Rust figures out the type from the literal or the surrounding expression, so you only annotate when clarity matters. Constants sit at the extreme end of immutability. They are declared with `const`, require a type annotation, and must be assigned a compile-time value:\n```rust\nconst MAX_RETRIES: u8 = 5;\nlet mut attempts = 0;\nwhile attempts < MAX_RETRIES {\n    attempts += 1;\n}\n```\nBecause `const` items live inlined everywhere they are used, they never borrow storage and cannot rely on runtime computation. Combine these rules and you get a simple checklist: default to immutable `let`, sprinkle in `mut` when mutation is essential, and elevate timeless numeric thresholds into `const` so every module reads the exact same value.",
+    "is_complete": false,
+    "next_focus": "Worked Example 1: create typed numeric bindings and observe implicit conversions."
+  }
+}

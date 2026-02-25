@@ -1,0 +1,43 @@
+{
+  "schema_version": "context_packet_v1",
+  "packet_id": "6aa65531-c57e-4809-9759-2b86e67a74fa",
+  "timestamp_utc": "2026-02-24T23:08:48.087Z",
+  "role": "scaffold",
+  "task_type": "session_scaffold",
+  "learner_profile": {
+    "masteryLevel": 0
+  },
+  "curriculum_context": {
+    "node_id": "S100",
+    "title": "Variables, types, and mutability",
+    "track": "syntax-basics",
+    "depth_target": "D1",
+    "keywords": [
+      "let",
+      "mut",
+      "const",
+      "type inference",
+      "shadowing",
+      "i32",
+      "u64",
+      "f64",
+      "bool",
+      "char",
+      "tuple",
+      "unit"
+    ],
+    "misconception_tags": [
+      "syn.let_mut_confusion",
+      "syn.shadowing_vs_mutation"
+    ]
+  },
+  "misconception_context": {
+    "top_tags": []
+  },
+  "attempt_context": null,
+  "evidence_context": null,
+  "policy_context": {
+    "allow_reveal": false
+  },
+  "memory_context": {}
+}

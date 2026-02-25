@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lesson_section_v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "role",
+    "section_id",
+    "type",
+    "content",
+    "is_complete",
+    "next_focus"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "const": "lesson_section_v1" },
+    "role": { "type": "string", "const": "lesson-expand" },
+    "section_id": { "type": "string" },
+    "type": { "type": "string", "enum": ["concept", "worked_example", "comparison", "pitfalls", "bridge", "resources"] },
+    "content": { "type": "string" },
+    "is_complete": { "type": "boolean" },
+    "next_focus": { "type": "string" }
+  }
+}

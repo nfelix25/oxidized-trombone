@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "comparison_cpp_auto_vs_var",
+    "type": "comparison",
+    "content": "C++ `auto` is fundamentally about *expressions*, so whatever category/value qualifiers the initializer exhibits dictate both the deduced type and the ownership semantics. That means you must spell out constness and references whenever you rely on them; otherwise the compiler eagerly materializes a fresh value. In C#, `var` and in Rust, the untyped `let` binding behave differently: they bind the *declared* variable to the inferred static type but keep qualifiers (mutability, reference-ness) handled by separate keywords, so there is less risk of silently losing immutability.\n```cpp\n#include <vector>\n#include <span>\n\nvoid tagPackets(std::vector<int>& packets) {\n  auto copy = packets;          // new std::vector<int>, mutations local\n  auto iter = packets.begin();  // iterator owning only a pointer-like handle\n  const auto& view = packets;   // must add & to alias original storage\n  std::span<int> window{packets};\n}\n```\n```csharp\nvar packets = new List<int> {1, 2, 3}; // still List<int>\nvar view = packets;                    // reference semantics by default\n```\n```rust\nlet packet = 42;        // immutable i32 unless `mut`\nlet mut alias = packet; // explicit mutability opt-in\n```\nIn Rust, you annotate borrowing (`&packets`, `&mut packets`) outside of type inference, so the compiler never strips references implicitly. C# similarly preserves reference semantics because objects live on the managed heap, and `var` merely copies the reference. By contrast, C++ performs copy semantics unless you write `auto&` or `const auto&`, so toggling between owning and aliasing must be a conscious syntax choice. Treat `auto` as a shortcut for long type spellings, not for ownership intent; introduce reference or pointer qualifiers explicitly so your code communicates the same guarantees that `var`/`let` give you for free in other ecosystems.",
+    "is_complete": false,
+    "next_focus": "Bridge: Preview how mastering `auto` prepares learners for templates and generic algorithms in the next module."
+  }
+}

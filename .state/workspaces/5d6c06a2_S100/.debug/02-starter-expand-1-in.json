@@ -1,0 +1,60 @@
+{
+  "schema_version": "context_packet_v1",
+  "packet_id": "3ef54e14-4b92-4085-b27d-b86b26332b70",
+  "timestamp_utc": "2026-02-24T18:52:02.560Z",
+  "role": "starter-expand",
+  "task_type": "starter_expand",
+  "learner_profile": {
+    "masteryLevel": 0
+  },
+  "curriculum_context": {
+    "node_id": "S100",
+    "depth_target": "D1"
+  },
+  "misconception_context": {
+    "top_tags": []
+  },
+  "attempt_context": null,
+  "evidence_context": null,
+  "policy_context": {
+    "allow_reveal": false
+  },
+  "memory_context": {},
+  "scaffold_context": {
+    "scaffold_id": "scaf_S100_vars_types_mut",
+    "exercise_description": "Design a multi-file Rust mini-lab where learners tame smart-home readings using careful binding declarations, exploring mutability, constants, type inference, and shadowing with numeric, boolean, character, tuple, and unit values in preparation for richer stateful programs.",
+    "lesson_plan": {
+      "section_intents": [
+        "Hook: contrast immutable vs mutable binding in a playful thermostat example",
+        "Concept: introduce `let`, `mut`, and `const` syntax plus type inference defaults",
+        "Worked Example 1: step through creating typed numeric bindings (`i32`, `u64`, `f64`) and observing implicit conversions",
+        "Worked Example 2: model booleans, chars, and tuples through a mini sensor payload structuring task",
+        "Pitfall Focus: uncover errors from mixing mutable borrows and reassignment plus misunderstanding unit type",
+        "Comparison: analyze shadowing vs mutation trade-offs for configuration toggles",
+        "Bridge: foreshadow how disciplined bindings support upcoming control-flow decisions and ownership rules"
+      ]
+    },
+    "starter_plan": {
+      "file_intents": [
+        "src/bindings.rs: stubs `init_temperature`, `toggle_power_state`, `freeze_level`, `shadow_demo`, `const_identifier`, `unit_logger`",
+        "src/types.rs: stubs `max_u64_sensor`, `avg_f64_readings`, `char_from_code`, `tuple_swap`, `bool_gate`"
+      ]
+    },
+    "test_plan": {
+      "case_intents": [
+        "bindings::init_temperature returns immutable `i32` default and rejects mutation attempts",
+        "bindings::toggle_power_state flips a mutable `bool` binding and persists state change",
+        "bindings::freeze_level uses `const` with explicit type and prevents reassignment",
+        "bindings::shadow_demo shows value change via shadowing without mutating original binding",
+        "bindings::const_identifier enforces uppercase naming and compile-time literal assignment",
+        "bindings::unit_logger emits `()` and proves side-effect-only execution",
+        "types::max_u64_sensor clamps to `u64::MAX` when overflow would occur",
+        "types::avg_f64_readings keeps double precision and handles empty slice via `Option`",
+        "types::char_from_code safely converts `u32` to `char` or errors on invalid scalar value",
+        "types::tuple_swap swaps `(i32, bool)` elements without mutation using pattern matching"
+      ]
+    }
+  },
+  "prior_loop_sections": [],
+  "current_sections": []
+}

@@ -1,0 +1,14 @@
+{
+  "accepted": true,
+  "schemaName": "starter_section_v1",
+  "payload": {
+    "schema_version": "starter_section_v1",
+    "role": "starter-expand",
+    "section_id": "shadowing.rs",
+    "type": "file",
+    "file_path": "shadowing.rs",
+    "content": "// Shadowing demos to compare mutation and redeclaration patterns.\n\n/// Shows how to shadow an immutable temperature binding to change both value and type without requiring `mut`.\n/// Implementers should return the original Celsius reading plus a formatted Fahrenheit summary derived via shadowing.\npub fn shadow_temperature_reading(reading_celsius: f64) -> (f64, String) {\n    // Capture the initial immutable reading, then shadow it with converted forms to illustrate type swapping.\n    todo!()\n}\n\n/// Demonstrates safe redeclaration of a unit label inside a narrow scope to enforce ASCII-only characters.\n/// Implementers should shadow the label to sanitize non-ASCII input while proving the outer binding remains unchanged.\npub fn redeclare_unit_label(raw_label: &str) -> (String, String) {\n    // Keep the original immutable label, then shadow it with a cleaned ASCII variant that the function returns.\n    todo!()\n}\n\n/// Contrasts mutation and shadowing by keeping an outer immutable counter while an inner scope mutates its own copy.\n/// Implementers should return the untouched outer count alongside the inner mutable tally to highlight isolation.\npub fn scoped_counter_demo(start: i32) -> (i32, i32) {\n    // Bind an outer count, shadow it in an inner scope with a mutable version, and expose both results.\n    todo!()\n}\n",
+    "is_complete": false,
+    "next_focus": "types.rs"
+  }
+}

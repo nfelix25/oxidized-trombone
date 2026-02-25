@@ -1,4 +1,5 @@
 import readline from "node:readline";
+import { getAvailableLanguages } from "../config/languages.js";
 
 export function createPrompt() {
   return readline.createInterface({
@@ -21,6 +22,22 @@ export async function selectMode(rl) {
     if (answer === "1") return "guided";
     if (answer === "2") return "custom";
     console.log("Please enter 1 or 2.");
+  }
+}
+
+export async function selectLanguage(rl) {
+  const langs = getAvailableLanguages();
+  console.log("\nSelect language:");
+  langs.forEach((lang, i) => {
+    const display = lang.charAt(0).toUpperCase() + lang.slice(1);
+    console.log(`  ${i + 1}) ${display}`);
+  });
+
+  while (true) {
+    const answer = (await question(rl, `Choice [1-${langs.length}]: `)).trim();
+    const idx = parseInt(answer, 10) - 1;
+    if (idx >= 0 && idx < langs.length) return langs[idx];
+    console.log(`Please enter a number between 1 and ${langs.length}.`);
   }
 }
 

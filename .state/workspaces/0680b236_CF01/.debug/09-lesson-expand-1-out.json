@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "hook_implicit_vs_explicit",
+    "type": "concept",
+    "content": "During a midnight telemetry bug hunt, our rover kept resetting because a supposedly small counter silently bloated into a wide floating-point value. A teammate had chased ghost overflows for hours until we realized the culprit was an innocent-looking `auto` declaration that deduced a different type than the explicit spec in the design doc. To recreate the scene, contrast the implicit code we found with the explicit patch that finally stabilized the readings:\n```cpp\n// Implicit: type inferred from the literal 0, later reassigned a double\nauto packetBudget = 0;        // int\npacketBudget = 0.75 * frames; // narrows silently on most builds\n\n// Explicit: mirrors the diagnostic spreadsheets\ndouble packetBudget = 0.0;\npacketBudget = 0.75 * frames; // preserves precision across platforms\n```\nThe difference isn’t syntax vanity—it’s the ability to reason about every intermediate value when logs go quiet and hardware sits millions of miles away. In this module we’ll embrace `auto`, but with the same discipline that saved the rover: knowing what primitive type is actually deduced, how initialization style nudges that deduction, and what clues the compiler can give before a faulty variable forces a reboot. Keep that late-night debugging story in mind as motivation for tracking types deliberately, even when the compiler happily guesses for you.",
+    "is_complete": false,
+    "next_focus": "Concept Focus: Explain primitive types (int, double, bool, char) and initialization styles that pair best with type inference."
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "schema_version": "context_packet_v1",
+  "packet_id": "cc684b7d-fd17-41b1-af5d-e7087aa0371f",
+  "timestamp_utc": "2026-02-24T23:09:01.649Z",
+  "role": "starter-expand",
+  "task_type": "starter_expand",
+  "learner_profile": {
+    "masteryLevel": 0
+  },
+  "curriculum_context": {
+    "node_id": "S100",
+    "depth_target": "D1"
+  },
+  "misconception_context": {
+    "top_tags": []
+  },
+  "attempt_context": null,
+  "evidence_context": null,
+  "policy_context": {
+    "allow_reveal": false
+  },
+  "memory_context": {},
+  "scaffold_context": {
+    "scaffold_id": "scaffold-S100-D1-v1",
+    "exercise_description": "Design a mini smart-home metrics toolkit that reinforces Rust variable declarations, mutability, constants, and type inference across integers, floats, tuples, and bools, culminating in comparisons between mutation and shadowing before leading into control flow.",
+    "lesson_plan": {
+      "section_intents": [
+        "Spark interest with a story about modeling a smart thermostat’s daily report to motivate precise variable control.",
+        "Establish fundamentals of `let`, `mut`, and `const`, highlighting Rust’s default immutability and type inference rules.",
+        "Worked example 1: walk through modeling daily temperature readings using `let` bindings with explicit vs inferred integer/float types.",
+        "Worked example 2: refactor an energy-budget tracker to show when to choose `mut`, when to shadow, and how constants keep invariants static.",
+        "Surface common pitfalls such as forgetting `mut`, mixing signed/unsigned integers, or misusing `_` placeholders for unused bindings.",
+        "Comparison spotlight: contrast mutation with shadowing using scoped demos to clarify safety trade-offs and typical use cases.",
+        "Bridge forward by previewing how these bindings feed into control-flow patterns (loops/conditionals) tackled in the next lesson."
+      ]
+    },
+    "starter_plan": {
+      "file_intents": [
+        "src/bindings.rs: add 3-4 function stubs (`define_city_population`, `toggle_alarm_state`, `compute_interest_rate`) covering basic `let`/`mut` primitives.",
+        "src/shadowing.rs: add 3 scoped demo stubs (`shadow_temperature_reading`, `redeclare_unit_label`, `scoped_counter_demo`) illustrating shadowing vs mutation choices.",
+        "src/types.rs: add 3-4 stubs (`sum_mixed_integers`, `split_tuple_components`, `const_planck_ratio`) focused on explicit type annotations, tuples, and units."
+      ]
+    },
+    "test_plan": {
+      "case_intents": [
+        "`define_city_population` returns an immutable `i32` matching the expected city sample when called with no args.",
+        "`toggle_alarm_state` flips a mutable boolean and toggling twice restores the original value (property-style).",
+        "`compute_interest_rate` uses `f64` math to produce a precise fractional rate within a 1e-6 tolerance.",
+        "`shadow_temperature_reading` demonstrates that shadowed bindings can change type without mutability errors.",
+        "`redeclare_unit_label` handles an edge-case Unicode-like char by constraining to ASCII and proving the label resets safely (edge case).",
+        "`scoped_counter_demo` shows an inner mutable counter that doesn’t leak mutations to the outer scope.",
+        "`sum_mixed_integers` safely adds signed `i32` and unsigned `u64` inputs without overflow for provided fixtures.",
+        "`split_tuple_components` destructures a `(char, bool, f64)` tuple and returns each component in order.",
+        "`const_planck_ratio` exposes a `const` binding that stays accessible across calls and matches the expected `f64` literal."
+      ]
+    }
+  },
+  "prior_loop_sections": [],
+  "current_sections": []
+}

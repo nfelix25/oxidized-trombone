@@ -1,12 +1,12 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { seedCurriculum } from "../curriculum/seed.js";
+import { allCurricula as seedCurriculum } from "../curriculum/allCurricula.js";
 import { getEligibleNextNodes, mapCustomTopic, prerequisiteGapReport } from "../curriculum/selectors.js";
 import { FileStorageAdapter } from "../state/storage.js";
 import { createMasteryState, updateMasteryForOutcome } from "../mastery/store.js";
 import { createMisconceptionState, recordMisconception } from "../mastery/misconceptions.js";
 import { recommendNextNodes } from "../mastery/recommend.js";
-import { materializeExercise } from "../runtime/materialize.js";
+import { assembleStarterFiles, assembleTestFiles } from "../runtime/materialize.js";
 import { runCommand } from "../runtime/commandRunner.js";
 import { createAttemptState, recordAttempt, recordHintUsage } from "../runtime/attempts.js";
 import { persistReviewOutcome, extractAttemptEvidence } from "../runtime/reviewIntegration.js";
@@ -21,13 +21,12 @@ export async function runA203SeedFlow(baseDir = ".state/seed_a203") {
   const customTopic = mapCustomTopic(seedCurriculum, "mutable references aliasing", masteryState.byNode);
   const gaps = prerequisiteGapReport(customTopic);
 
-  const exercisePack = {
-    starter_files: [{ path: "src/lib.rs", content: "pub fn bump(v: &mut Vec<i32>) { let _ = v; }" }],
-    test_files: [{ path: "tests/aliasing.rs", content: "#[test] fn smoke(){ assert!(true); }" }]
-  };
+  const starterSections = [{ file_path: "lib.rs", content: "pub fn bump(v: &mut Vec<i32>) { let _ = v; }" }];
+  const testSections = [{ file_path: "aliasing.rs", content: "#[test] fn smoke(){ assert!(true); }" }];
 
   const workspace = path.join(baseDir, "workspace");
-  await materializeExercise(workspace, exercisePack);
+  await assembleStarterFiles(workspace, starterSections);
+  await assembleTestFiles(workspace, testSections);
 
   let attempt = createAttemptState("A203_seed");
   const simulatedFailure = await runCommand("node", ["-e", "console.error('error[E0499]: cannot borrow as mutable'); process.exit(1)"]);

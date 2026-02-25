@@ -4,8 +4,10 @@ import path from "node:path";
 const SCHEMA_DIR = path.resolve("src/schemas");
 
 const SCHEMA_FILES = {
-  lesson_plan_v1: "lesson_plan_v1.schema.json",
-  exercise_pack_v1: "exercise_pack_v1.schema.json",
+  scaffold_v1: "scaffold_v1.schema.json",
+  starter_section_v1: "starter_section_v1.schema.json",
+  test_section_v1: "test_section_v1.schema.json",
+  lesson_section_v1: "lesson_section_v1.schema.json",
   hint_pack_v1: "hint_pack_v1.schema.json",
   review_report_v1: "review_report_v1.schema.json"
 };
@@ -63,6 +65,14 @@ function validateValue(value, schema, field = "$") {
 
   if (schema.maximum !== undefined && typeof value === "number" && value > schema.maximum) {
     errors.push(`${field}: expected <= ${schema.maximum}`);
+  }
+
+  if (schema.minLength !== undefined && typeof value === "string" && value.length < schema.minLength) {
+    errors.push(`${field}: expected minLength ${schema.minLength}, got ${value.length}`);
+  }
+
+  if (schema.maxLength !== undefined && typeof value === "string" && value.length > schema.maxLength) {
+    errors.push(`${field}: expected maxLength ${schema.maxLength}, got ${value.length}`);
   }
 
   if (schema.type === "object" && value && typeof value === "object" && !Array.isArray(value)) {

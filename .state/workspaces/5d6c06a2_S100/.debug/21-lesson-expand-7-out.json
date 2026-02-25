@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "section_bridge",
+    "type": "bridge",
+    "content": "Every binding choice you just practiced becomes the scaffold for richer flow control and ownership guarantees. Imagine an upcoming dispatcher that decides which actuator should fire next:\n```rust\nconst CRITICAL_DELTA: i32 = 5;\n\nfn route(reading_c: i32, last_toggle: bool) -> &'static str {\n    let last_toggle = if reading_c < 0 { false } else { last_toggle }; // shadow to bake in safety policy\n    if reading_c.abs() >= CRITICAL_DELTA {\n        return match last_toggle {\n            true => \"hold\", // immutable branch: no borrower can change it mid-match\n            false => \"heat\",\n        };\n    }\n    \"idle\"\n}\n```\nNotice how each control-flow construct trusts earlier binding decisions: `CRITICAL_DELTA` stays a compile-time constant so the `match` can be reasoned about at compile time, the shadowed `last_toggle` ensures the ownership of the original boolean remains untouched, and the `if`/`match` blocks never need mutable borrows to infer the next state. As we transition into pattern-heavy control flow and, later, ownership transfers (`move`, borrowing, lifetimes), this discipline prevents fights between borrowers and reassignments. Keep defaulting to immutable shadowed values for derived facts, reserve `mut` for deliberate state hand-offs, and promote shared invariants into `const` so future `match` arms, loops, and iterator adapters inherit the same ground truth without cloning or aliasing headaches.",
+    "is_complete": true,
+    "next_focus": "All section intents addressed; ready for assessment or practice tasks."
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "accepted": true,
+  "schemaName": "scaffold_v1",
+  "payload": {
+    "schema_version": "scaffold_v1",
+    "role": "scaffold",
+    "scaffold_id": "e8a0c2c8-7259-4c90-9a30-11f15d2c003d",
+    "node_id": "CF01",
+    "depth_target": "D1",
+    "lesson_plan": {
+      "section_intents": [
+        "Hook: Contrast implicit vs explicit variable declarations in a debugging story to motivate careful type tracking.",
+        "Concept Focus: Explain primitive types (int, double, bool, char) and initialization styles that pair best with type inference.",
+        "Tooling: Demonstrate how `auto` deduces types from initializer expressions, including reading compiler diagnostics.",
+        "Worked Example 1: Use range-based for loops with `auto` iterators and `const auto&` to preserve immutability.",
+        "Worked Example 2: Showcase `auto` with arithmetic expressions mixing ints and doubles; highlight precision and promotion.",
+        "Pitfalls: Investigate cases where `auto` strips references/const, leading to dangling references or UB, plus remedy patterns.",
+        "Comparison: Contrast `auto` in C++ with `var`-style inference in C#/Rust to emphasize explicitness requirements.",
+        "Bridge: Preview how mastering `auto` prepares learners for templates and generic algorithms in the next module."
+      ]
+    },
+    "starter_plan": {
+      "file_intents": [
+        "src/type_workshop.h: Declare 4 stub functions (e.g., `inferSumType`, `preserveConstRef`, `boolFlagFromChar`, `charFromBool`) with Doxygen comments describing expected behavior and parameters.",
+        "src/type_workshop.cpp: Provide empty implementations for the declared functions, each returning placeholder values and marked TODO for learners."
+      ]
+    },
+    "test_plan": {
+      "case_intents": [
+        "Verify `inferSumType` returns a double when combining int and double inputs.",
+        "Confirm `inferSumType` preserves integer type when both operands are ints.",
+        "Ensure `preserveConstRef` returns a const reference without slicing when given const data.",
+        "Detect that `preserveConstRef` does not bind to temporaries (dangling reference guard).",
+        "Check `boolFlagFromChar` maps ASCII digits to true/false according to spec.",
+        "Check `boolFlagFromChar` rejects non-digit chars with a safe default.",
+        "Validate `charFromBool` returns explicit 'T'/'F' without relying on implicit bool-to-char conversions.",
+        "Edge case: stress `inferSumType` with very large ints to ensure no narrowing or UB.",
+        "Edge case: feed `preserveConstRef` a volatile-qualified source to confirm qualifiers survive.",
+        "Edge case: ensure `charFromBool` handles `std::optional<bool>` inputs when empty via default character."
+      ]
+    },
+    "exercise_description": "Design a deep-dive exercise on C++ type deduction with `auto`, emphasizing safe initialization, const-correctness, and observing how inference interacts with primitive types and references."
+  }
+}

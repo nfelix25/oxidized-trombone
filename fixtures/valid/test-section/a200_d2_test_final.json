@@ -1,0 +1,10 @@
+{
+  "schema_version": "test_section_v1",
+  "role": "test-expand",
+  "section_id": "ts_a200_d2_final",
+  "type": "unit_test",
+  "file_path": "tests.rs",
+  "content": "#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[test]\n    fn take_and_return_gives_back_string() {\n        let s = String::from(\"hello\");\n        let result = take_and_return(s);\n        assert_eq!(result, \"hello\");\n    }\n}\n",
+  "is_complete": true,
+  "next_focus": ""
+}

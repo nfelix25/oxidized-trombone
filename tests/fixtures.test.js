@@ -10,12 +10,10 @@ test("fixture harness validates valid and invalid examples", () => {
 
 test("fixture report includes rule identifiers for failures in invalid fixtures", () => {
   const { summary } = runFixtureValidation();
-  // rulesCovered should include at least the baseline policy rules
+  // rulesCovered should include at least the baseline policy rules still applicable
   const covered = new Set(summary.rulesCovered);
   assert.ok(covered.has("no_early_reveal"), "should cover no_early_reveal rule");
   assert.ok(covered.has("pass_score_consistency"), "should cover pass_score_consistency rule");
-  assert.ok(covered.has("non_empty_run_instructions"), "should cover non_empty_run_instructions rule");
-  assert.ok(covered.has("bridge_lesson_not_for_complex_outline"), "should cover bridge_lesson_not_for_complex_outline rule");
 });
 
 test("fixture harness includes live-like sequence fixtures in results", () => {

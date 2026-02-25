@@ -1,6 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import os from "node:os";
+import { getLanguageConfig } from "../config/languages.js";
 
 const SESSIONS_BASE = path.resolve(".state/workspaces");
 
@@ -9,10 +9,13 @@ export function workspacePath(sessionId, nodeId) {
   return path.join(SESSIONS_BASE, label);
 }
 
-export async function createWorkspace(sessionId, nodeId) {
+export async function createWorkspace(sessionId, nodeId, language = "rust") {
   const dir = workspacePath(sessionId, nodeId);
+  const langConfig = getLanguageConfig(language);
   await fs.mkdir(dir, { recursive: true });
-  await writeCargotoml(dir, nodeId);
+  await fs.mkdir(path.join(dir, langConfig.sourceDir), { recursive: true });
+  await fs.mkdir(path.join(dir, langConfig.testsDir), { recursive: true });
+  await langConfig.writeProjectConfig(dir);
   return { dir, sessionId, nodeId };
 }
 
@@ -32,18 +35,4 @@ export async function workspaceExists(wsDir) {
   } catch {
     return false;
   }
-}
-
-async function writeCargotoml(dir, nodeId) {
-  const name = nodeId.toLowerCase().replace(/[^a-z0-9]/g, "_");
-  const content = `[package]
-name = "${name}_exercise"
-version = "0.1.0"
-edition = "2021"
-`;
-  const srcDir = path.join(dir, "src");
-  await fs.mkdir(srcDir, { recursive: true });
-  const testsDir = path.join(dir, "tests");
-  await fs.mkdir(testsDir, { recursive: true });
-  await fs.writeFile(path.join(dir, "Cargo.toml"), content);
 }

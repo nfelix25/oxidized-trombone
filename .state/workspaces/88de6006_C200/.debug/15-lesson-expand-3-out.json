@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "sec-pointer-arithmetic",
+    "type": "concept",
+    "content": "C17 6.5.6 only blesses pointer arithmetic when the operands refer to elements of the same array object (or the sentinel one-past-the-end). Adding an integer `n` to `T *p` conceptually walks `n` slots of size `sizeof(T)`; if the walk escapes the allocation the behavior is undefined even before you dereference. Subtracting two compatible pointers yields a `ptrdiff_t`, a signed difference type large enough to describe how many elements separate them. That result is only meaningful when both pointers originated from the same live array, making `ptrdiff_t` the canonical way to talk about cursor gaps inside POSIX buffers. Pointer comparisons follow the same rule: only perform relational operators on pointers into the same object. Attempting to compare or subtract unrelated pointers, or straying more than one slot past the allocation, forfeits all guarantees. ```c\n#include <stddef.h>\n#include <stdint.h>\n\nsize_t frame_bytes_remaining(uint8_t *base, size_t filled)\n{\n    uint8_t *cursor = base;\n    uint8_t *limit = base + filled; /* valid one-past */\n    while ((cursor + 64) <= limit) {\n        process_frame(cursor, 64);\n        cursor += 64; /* stays within the buffer */\n    }\n    ptrdiff_t diff = limit - cursor; /* defined: both in same object */\n    return (diff >= 0) ? (size_t)diff : 0u;\n}\n```This snippet keeps every pointer addition inside the `base[0..filled]` allocation, then casts the `ptrdiff_t` difference to an unsigned size only after confirming it is non-negative. That is the disciplined pattern you need whenever you advance cursors through kernel-filled storage: add offsets cautiously, subtract only matching pointers, and treat `ptrdiff_t` as the authoritative measure of safe distance.",
+    "is_complete": false,
+    "next_focus": "Explain array-to-pointer decay at call boundaries, especially for POSIX functions expecting void* and size arguments."
+  }
+}

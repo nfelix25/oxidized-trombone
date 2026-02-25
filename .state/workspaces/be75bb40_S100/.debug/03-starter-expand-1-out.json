@@ -1,0 +1,14 @@
+{
+  "accepted": true,
+  "schemaName": "starter_section_v1",
+  "payload": {
+    "schema_version": "starter_section_v1",
+    "role": "starter-expand",
+    "section_id": "bindings.rs",
+    "type": "file",
+    "file_path": "bindings.rs",
+    "content": "// Smart-home binding demos for the exercise crate.\n\n/// Demonstrates Rust's default immutability with `let` bindings and type inference.\n/// Implementers should return the sample city's population as an `i32` without using `mut`.\npub fn define_city_population() -> i32 {\n    // Bind an immutable population value with `let` and return it directly.\n    todo!()\n}\n\n/// Highlights when `mut` is required to flip a boolean smart-home alarm state.\n/// Implementers should toggle the state twice to prove mutations happen in a scoped, reversible way.\npub fn toggle_alarm_state(initial_state: bool) -> bool {\n    // Make a mutable copy of the alarm state, flip it, then flip it back to demonstrate control.\n    todo!()\n}\n\n/// Reinforces explicit `f64` math with `let`, constants, and inferred temporaries for interest calculations.\n/// Implementers should compute `(gain / principal)` with double precision and illustrate why `mut` is unnecessary.\npub fn compute_interest_rate(principal: f64, gain: f64) -> f64 {\n    // Use precise floating-point bindings (and optional consts) to derive the fractional interest rate.\n    todo!()\n}\n",
+    "is_complete": false,
+    "next_focus": "shadowing.rs"
+  }
+}

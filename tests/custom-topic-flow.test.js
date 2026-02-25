@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { seedCurriculum } from "../src/curriculum/seed.js";
+import { allCurricula as seedCurriculum } from "../src/curriculum/allCurricula.js";
 import { mapCustomTopic, prerequisiteGapReport } from "../src/curriculum/selectors.js";
 
 test("custom topic: exact match returns mapped nodes", () => {
@@ -10,10 +10,10 @@ test("custom topic: exact match returns mapped nodes", () => {
 });
 
 test("custom topic: no match returns explicit empty result", () => {
-  const mapping = mapCustomTopic(seedCurriculum, "python generators coroutines", {});
+  const mapping = mapCustomTopic(seedCurriculum, "quantum entanglement qubit superposition", {});
   assert.equal(mapping.mappedNodeIds.length, 0, "should have no mapped nodes");
   assert.deepEqual(mapping.prerequisiteGaps, [], "should have no prerequisite gaps");
-  assert.equal(mapping.topic, "python generators coroutines");
+  assert.equal(mapping.topic, "quantum entanglement qubit superposition");
 });
 
 test("custom topic: prerequisite gap report identifies unmet prerequisites", () => {

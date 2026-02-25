@@ -17,6 +17,19 @@ function collectJsonFiles(dir) {
     .map((name) => path.join(dir, name));
 }
 
+function collectJsonFilesRecursive(dir) {
+  const results = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results.push(...collectJsonFilesRecursive(fullPath));
+    } else if (entry.name.endsWith(".json")) {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
+
 function validateValidFixtures() {
   const results = [];
 
@@ -33,10 +46,16 @@ function validateValidFixtures() {
   }
 
   const roleMap = {
-    planner: "lesson_plan_v1",
-    author: "exercise_pack_v1",
+    scaffold: "scaffold_v1",
+    "starter-section": "starter_section_v1",
+    "test-section": "test_section_v1",
+    "lesson-section": "lesson_section_v1",
     coach: "hint_pack_v1",
-    reviewer: "review_report_v1"
+    reviewer: "review_report_v1",
+    "c-scaffold": "scaffold_v1",
+    "c-starter-section": "starter_section_v1",
+    "c-test-section": "test_section_v1",
+    "c-lesson-section": "lesson_section_v1"
   };
 
   for (const [folder, schemaName] of Object.entries(roleMap)) {
@@ -64,8 +83,10 @@ function validateValidFixtures() {
 
   // Live-sequence fixtures: schema_version field determines schema
   const SCHEMA_VERSION_MAP = {
-    lesson_plan_v1: "lesson_plan_v1",
-    exercise_pack_v1: "exercise_pack_v1",
+    scaffold_v1: "scaffold_v1",
+    starter_section_v1: "starter_section_v1",
+    test_section_v1: "test_section_v1",
+    lesson_section_v1: "lesson_section_v1",
     hint_pack_v1: "hint_pack_v1",
     review_report_v1: "review_report_v1"
   };
@@ -102,7 +123,7 @@ function validateInvalidFixtures() {
   const results = [];
   const invalidDir = path.join(ROOT, "invalid");
 
-  for (const file of collectJsonFiles(invalidDir)) {
+  for (const file of collectJsonFilesRecursive(invalidDir)) {
     const fixture = loadJson(file);
     const schemaResult = validateRoleOutput(fixture.schemaName, fixture.payload);
 

@@ -5,6 +5,10 @@ export function buildContextPacket({
   taskType,
   learnerProfile,
   curriculumContext,
+  scaffoldContext = null,
+  priorLoopSections = null,
+  currentSections = null,
+  nextFocus = null,
   misconceptionContext,
   attemptContext,
   evidenceContext,
@@ -12,7 +16,7 @@ export function buildContextPacket({
   outputContract,
   memoryContext = {}
 }) {
-  return {
+  const packet = {
     schema_version: "context_packet_v1",
     packet_id: randomUUID(),
     timestamp_utc: new Date().toISOString(),
@@ -27,4 +31,11 @@ export function buildContextPacket({
     output_contract: outputContract,
     memory_context: memoryContext
   };
+
+  if (scaffoldContext !== null) packet.scaffold_context = scaffoldContext;
+  if (priorLoopSections !== null) packet.prior_loop_sections = priorLoopSections;
+  if (currentSections !== null) packet.current_sections = currentSections;
+  if (nextFocus !== null) packet.next_focus = nextFocus;
+
+  return packet;
 }

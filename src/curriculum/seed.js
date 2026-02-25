@@ -1,13 +1,96 @@
 import { createCurriculumGraph, createNode } from "./model.js";
 
-// --- Tier 1: Foundations ---
+// ---------------------------------------------------------------------------
+// Tier 0: Rust Syntax Basics — fast-track for experienced programmers
+// These are D1/D2 nodes: you already know what a variable is; you just need
+// to learn how Rust spells it. All should unlock quickly.
+// ---------------------------------------------------------------------------
+const syntaxBasicsNodes = [
+  createNode({
+    id: "S100",
+    title: "Variables, types, and mutability",
+    track: "syntax-basics",
+    depthTarget: "D1",
+    prerequisites: [],
+    misconceptionTags: ["syn.let_mut_confusion", "syn.shadowing_vs_mutation"],
+    keywords: ["let", "mut", "const", "type inference", "shadowing", "i32", "u64", "f64", "bool", "char", "tuple", "unit"]
+  }),
+  createNode({
+    id: "S101",
+    title: "Functions, control flow, and expressions",
+    track: "syntax-basics",
+    depthTarget: "D1",
+    prerequisites: ["S100"],
+    misconceptionTags: ["syn.statement_vs_expression", "syn.implicit_return_confusion"],
+    keywords: ["fn", "return", "if", "else", "loop", "while", "for", "in", "break", "continue", "range", "block expression"]
+  }),
+  createNode({
+    id: "S102",
+    title: "Structs and impl blocks",
+    track: "syntax-basics",
+    depthTarget: "D1",
+    prerequisites: ["S101"],
+    misconceptionTags: ["syn.self_vs_Self_confusion", "syn.associated_fn_vs_method"],
+    keywords: ["struct", "impl", "self", "&self", "&mut self", "associated function", "new", "field", "method"]
+  }),
+  createNode({
+    id: "S103",
+    title: "Enums with data and match",
+    track: "syntax-basics",
+    depthTarget: "D1",
+    prerequisites: ["S102"],
+    misconceptionTags: ["syn.enum_variant_not_type_confusion", "syn.match_arm_binding_confusion"],
+    keywords: ["enum", "match", "variant", "if let", "while let", "tuple variant", "struct variant", "exhaustive"]
+  }),
+  createNode({
+    id: "S104",
+    title: "String types: String vs &str",
+    track: "syntax-basics",
+    depthTarget: "D2",
+    prerequisites: ["S100"],
+    misconceptionTags: ["syn.string_vs_str_confusion", "syn.string_literal_type_confusion"],
+    keywords: ["String", "&str", "str", "string literal", "to_string", "to_owned", "format!", "UTF-8", "push_str", "as_str"]
+  }),
+  createNode({
+    id: "S105",
+    title: "Closures and higher-order functions",
+    track: "syntax-basics",
+    depthTarget: "D2",
+    prerequisites: ["S101"],
+    misconceptionTags: ["syn.closure_type_inference_confusion", "syn.fn_pointer_vs_closure"],
+    keywords: ["closure", "|args|", "Fn", "FnMut", "FnOnce", "capture", "higher-order", "fn pointer", "type inference"]
+  }),
+  createNode({
+    id: "S106",
+    title: "Traits — defining and implementing",
+    track: "syntax-basics",
+    depthTarget: "D2",
+    prerequisites: ["S102"],
+    misconceptionTags: ["syn.trait_not_interface_confusion", "syn.default_method_override_confusion"],
+    keywords: ["trait", "impl Trait for Type", "default method", "required method", "duck typing", "interface", "polymorphism"]
+  }),
+  createNode({
+    id: "S107",
+    title: "Modules, visibility, and Cargo",
+    track: "syntax-basics",
+    depthTarget: "D1",
+    prerequisites: ["S100"],
+    misconceptionTags: ["syn.mod_vs_crate_confusion", "syn.pub_visibility_confusion"],
+    keywords: ["mod", "use", "pub", "pub(crate)", "super", "crate", "extern crate", "Cargo.toml", "dependencies", "workspace"]
+  })
+];
+
+// ---------------------------------------------------------------------------
+// Tier 1: Foundations — Ownership, Borrowing, Lifetimes
+// Gate A200 behind S104 so learners have seen String before ownership.
+// ---------------------------------------------------------------------------
 const foundationsNodes = [
   createNode({
     id: "A200",
     title: "Ownership mental model",
     track: "foundations",
     depthTarget: "D3",
-    prerequisites: [],
+    prerequisites: ["S104"],
     misconceptionTags: ["own.move.after_move_use"],
     keywords: ["ownership", "moves", "stack", "heap", "copy", "clone"]
   }),
@@ -56,7 +139,7 @@ const foundationsNodes = [
     title: "Error handling with Result",
     track: "foundations",
     depthTarget: "D2",
-    prerequisites: ["A200"],
+    prerequisites: ["A200", "S103"],
     misconceptionTags: ["err.unwrap_panic_confusion", "err.question_mark_propagation"],
     keywords: ["result", "error", "unwrap", "question_mark", "ok", "err"]
   }),
@@ -65,7 +148,7 @@ const foundationsNodes = [
     title: "Option and None patterns",
     track: "foundations",
     depthTarget: "D1",
-    prerequisites: ["A200"],
+    prerequisites: ["A200", "S103"],
     misconceptionTags: ["err.option_vs_result_confusion"],
     keywords: ["option", "none", "some", "if let", "match"]
   }),
@@ -74,7 +157,7 @@ const foundationsNodes = [
     title: "Pattern matching and destructuring",
     track: "foundations",
     depthTarget: "D2",
-    prerequisites: ["A206"],
+    prerequisites: ["A206", "S103"],
     misconceptionTags: ["pattern.non_exhaustive_match", "pattern.binding_confusion"],
     keywords: ["match", "pattern", "destructure", "enum", "struct", "binding"]
   }),
@@ -95,10 +178,30 @@ const foundationsNodes = [
     prerequisites: ["A200", "A202"],
     misconceptionTags: ["own.partial_move_struct", "borrow.field_borrow_conflict"],
     keywords: ["struct", "field", "ownership", "partial move", "self"]
+  }),
+  createNode({
+    id: "A210",
+    title: "Closures, ownership, and move capture",
+    track: "foundations",
+    depthTarget: "D2",
+    prerequisites: ["A200", "S105"],
+    misconceptionTags: ["clos.move_capture_confusion", "clos.fn_trait_bound_confusion"],
+    keywords: ["closure", "move", "capture", "FnOnce", "FnMut", "Fn", "borrow in closure", "environment"]
+  }),
+  createNode({
+    id: "A211",
+    title: "Custom error types and error propagation",
+    track: "foundations",
+    depthTarget: "D2",
+    prerequisites: ["A205", "S106"],
+    misconceptionTags: ["err.from_impl_for_conversion", "err.question_mark_propagation"],
+    keywords: ["custom error", "impl Error", "From", "thiserror", "anyhow", "error chain", "Box<dyn Error>"]
   })
 ];
 
-// --- Tier 2: Collections, Iterators, Traits ---
+// ---------------------------------------------------------------------------
+// Tier 2: Collections, Iterators, Traits
+// ---------------------------------------------------------------------------
 const collectionsNodes = [
   createNode({
     id: "A500",
@@ -150,7 +253,7 @@ const collectionsNodes = [
     title: "Trait objects and dynamic dispatch",
     track: "collections",
     depthTarget: "D2",
-    prerequisites: ["A200", "A202"],
+    prerequisites: ["A200", "A202", "S106"],
     misconceptionTags: ["trait.dyn_size_unknown", "trait.object_safety_confusion"],
     keywords: ["dyn", "trait", "dynamic", "dispatch", "box", "vtable"]
   }),
@@ -159,13 +262,48 @@ const collectionsNodes = [
     title: "Implementing Display and From traits",
     track: "collections",
     depthTarget: "D1",
-    prerequisites: ["A205"],
+    prerequisites: ["A205", "S106"],
     misconceptionTags: ["trait.from_into_direction_confusion"],
     keywords: ["display", "from", "into", "trait", "implement", "format"]
+  }),
+  createNode({
+    id: "A507",
+    title: "Implementing the Iterator trait",
+    track: "collections",
+    depthTarget: "D2",
+    prerequisites: ["A503", "S106"],
+    misconceptionTags: ["iter.next_return_type_confusion", "iter.associated_item_confusion"],
+    keywords: ["Iterator", "next", "Item", "associated type", "impl Iterator", "custom iterator", "for loop protocol"]
   })
 ];
 
-// --- Tier 3: Async, Transfer Practice ---
+// ---------------------------------------------------------------------------
+// Tier 2.5: Testing
+// ---------------------------------------------------------------------------
+const testingNodes = [
+  createNode({
+    id: "X100",
+    title: "Unit and integration testing",
+    track: "testing",
+    depthTarget: "D1",
+    prerequisites: ["S106", "A205"],
+    misconceptionTags: ["test.cfg_test_confusion", "test.integration_test_mod_confusion"],
+    keywords: ["#[test]", "#[cfg(test)]", "assert_eq!", "assert!", "should_panic", "integration test", "tests/", "test module"]
+  }),
+  createNode({
+    id: "X101",
+    title: "Test organization and mocking patterns",
+    track: "testing",
+    depthTarget: "D2",
+    prerequisites: ["X100", "S106", "A210"],
+    misconceptionTags: ["test.mock_trait_confusion", "test.test_isolation_confusion"],
+    keywords: ["trait mock", "test double", "dependency injection", "test fixtures", "setup", "test helpers", "proptest"]
+  })
+];
+
+// ---------------------------------------------------------------------------
+// Tier 3: Async, Transfer Practice
+// ---------------------------------------------------------------------------
 const asyncNodes = [
   createNode({
     id: "A700",
@@ -214,7 +352,9 @@ const asyncNodes = [
   })
 ];
 
-// --- Tier 4: Smart Pointers ---
+// ---------------------------------------------------------------------------
+// Tier 4: Smart Pointers
+// ---------------------------------------------------------------------------
 const smartPointerNodes = [
   createNode({
     id: "B100",
@@ -254,7 +394,9 @@ const smartPointerNodes = [
   })
 ];
 
-// --- Tier 5: Concurrency (OS threads) ---
+// ---------------------------------------------------------------------------
+// Tier 5: Concurrency (OS threads)
+// ---------------------------------------------------------------------------
 const concurrencyNodes = [
   createNode({
     id: "C100",
@@ -270,7 +412,7 @@ const concurrencyNodes = [
     title: "Move closures and thread ownership",
     track: "concurrency",
     depthTarget: "D2",
-    prerequisites: ["C100", "A207"],
+    prerequisites: ["C100", "A210"],
     misconceptionTags: ["conc.closure_capture_vs_move", "own.move.after_move_use"],
     keywords: ["move", "closure", "capture", "thread", "FnOnce", "send"]
   }),
@@ -294,7 +436,9 @@ const concurrencyNodes = [
   })
 ];
 
-// --- Tier 6: Macros ---
+// ---------------------------------------------------------------------------
+// Tier 6: Macros
+// ---------------------------------------------------------------------------
 const macroNodes = [
   createNode({
     id: "M100",
@@ -325,14 +469,16 @@ const macroNodes = [
   })
 ];
 
-// --- Tier 7: Generics ---
+// ---------------------------------------------------------------------------
+// Tier 7: Generics
+// ---------------------------------------------------------------------------
 const genericsNodes = [
   createNode({
     id: "G100",
     title: "Generic type parameters in functions and structs",
     track: "generics",
     depthTarget: "D2",
-    prerequisites: ["A200", "A209"],
+    prerequisites: ["A200", "A209", "S106"],
     misconceptionTags: ["gen.monomorphization_confusion", "gen.type_param_vs_lifetime_param"],
     keywords: ["generic", "type parameter", "monomorphization", "angle brackets", "struct", "fn"]
   }),
@@ -366,8 +512,10 @@ const genericsNodes = [
 ];
 
 const nodes = [
+  ...syntaxBasicsNodes,
   ...foundationsNodes,
   ...collectionsNodes,
+  ...testingNodes,
   ...asyncNodes,
   ...smartPointerNodes,
   ...concurrencyNodes,
@@ -376,6 +524,11 @@ const nodes = [
 ];
 
 const tracks = {
+  "syntax-basics": {
+    id: "syntax-basics",
+    title: "Rust Syntax Basics",
+    nodeIds: syntaxBasicsNodes.map((n) => n.id)
+  },
   foundations: {
     id: "foundations",
     title: "Ownership and Borrowing",
@@ -385,6 +538,11 @@ const tracks = {
     id: "collections",
     title: "Collections, Iterators, and Traits",
     nodeIds: collectionsNodes.map((n) => n.id)
+  },
+  testing: {
+    id: "testing",
+    title: "Testing",
+    nodeIds: testingNodes.map((n) => n.id)
   },
   async: {
     id: "async",

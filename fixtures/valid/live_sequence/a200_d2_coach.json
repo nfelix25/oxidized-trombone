@@ -10,5 +10,6 @@
   "dominant_tag": "own.move.after_move_use",
   "allowed_reveal": false,
   "current_hint": {"style": "nudge", "text": "Remember that in Rust, when you pass a String to a function, ownership moves into the function. To return it, simply return the value from the function body."},
-  "full_solution_provided": false
+  "full_solution_provided": false,
+  "revealed_solution": null
 }

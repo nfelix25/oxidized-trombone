@@ -13,24 +13,31 @@
     "attempt_index",
     "pass_fail",
     "score",
+    "dominant_tag",
     "remediation"
   ],
   "properties": {
-    "schema_version": { "const": "review_report_v1" },
-    "role": { "const": "reviewer" },
+    "schema_version": { "type": "string", "const": "review_report_v1" },
+    "role": { "type": "string", "const": "reviewer" },
     "report_id": { "type": "string" },
     "exercise_id": { "type": "string" },
     "node_id": { "type": "string" },
     "depth_target": { "type": "string", "enum": ["D1", "D2", "D3"] },
-    "attempt_index": { "type": "integer", "minimum": 1 },
+    "attempt_index": { "type": "integer" },
     "pass_fail": {
       "type": "string",
       "enum": ["PASS", "FAIL", "PROVISIONAL_PASS", "INVALID_CONTEXT"]
     },
-    "score": { "type": "integer", "minimum": 0, "maximum": 100 },
-    "dominant_tag": { "type": ["string", "null"] },
+    "score": { "type": "integer" },
+    "dominant_tag": {
+      "anyOf": [
+        { "type": "string" },
+        { "type": "null" }
+      ]
+    },
     "remediation": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["action", "reason"],
       "properties": {
         "action": {

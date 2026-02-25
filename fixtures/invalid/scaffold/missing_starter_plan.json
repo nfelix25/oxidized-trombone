@@ -1,0 +1,18 @@
+{
+  "schemaName": "scaffold_v1",
+  "packet": {},
+  "payload": {
+    "schema_version": "scaffold_v1",
+    "role": "scaffold",
+    "scaffold_id": "sc_invalid_001",
+    "node_id": "A200",
+    "depth_target": "D2",
+    "lesson_plan": {
+      "section_intents": ["concept: ownership transfer"]
+    },
+    "test_plan": {
+      "case_intents": ["tests/tests.rs: basic ownership test"]
+    },
+    "exercise_description": "Missing starter_plan — should fail SCHEMA_VALIDATION_FAILED"
+  }
+}

@@ -3,24 +3,29 @@ import assert from "node:assert/strict";
 import { runStage } from "../src/orchestration/stages.js";
 import { withRetry, isRetryable, classifyFailure } from "../src/orchestration/retry.js";
 
-const VALID_PLANNER_PAYLOAD = {
-  schema_version: "lesson_plan_v1",
-  role: "planner",
-  plan_id: "lp_test",
+const VALID_SCAFFOLD_PAYLOAD = {
+  schema_version: "scaffold_v1",
+  role: "scaffold",
+  scaffold_id: "sc_fb_test",
   node_id: "A200",
   depth_target: "D1",
-  objective: "Test fallback mode",
-  misconception_focus: ["own.move.after_move_use"],
-  lesson_outline: [{ step: 1, title: "intro" }],
-  assessment_plan: { assessment_type: "coding_exercise" },
-  next_action: "generate_exercise"
+  lesson_plan: {
+    section_intents: ["concept: ownership transfer"]
+  },
+  starter_plan: {
+    file_intents: ["src/lib.rs: stub function"]
+  },
+  test_plan: {
+    case_intents: ["tests/tests.rs: basic test"]
+  },
+  exercise_description: "Test fallback mode"
 };
 
 test("fallback mode: uses fallbackPayload when fallback=true", async () => {
   const packet = {};
-  const result = await runStage("planner", packet, {
+  const result = await runStage("scaffold", packet, {
     fallback: true,
-    fallbackPayload: VALID_PLANNER_PAYLOAD
+    fallbackPayload: VALID_SCAFFOLD_PAYLOAD
   });
 
   assert.equal(result.accepted, true, "fallback with valid payload should be accepted");
@@ -29,7 +34,7 @@ test("fallback mode: uses fallbackPayload when fallback=true", async () => {
 
 test("fallback mode: fails with machine-readable error when no fallbackPayload", async () => {
   const packet = {};
-  const result = await runStage("planner", packet, {
+  const result = await runStage("scaffold", packet, {
     fallback: true
   });
 
@@ -40,8 +45,8 @@ test("fallback mode: fails with machine-readable error when no fallbackPayload",
 
 test("fallback mode: schema validation still runs on fallbackPayload", async () => {
   const packet = {};
-  const badPayload = { schema_version: "lesson_plan_v1", role: "planner" }; // missing required fields
-  const result = await runStage("planner", packet, {
+  const badPayload = { schema_version: "scaffold_v1", role: "scaffold" }; // missing required fields
+  const result = await runStage("scaffold", packet, {
     fallback: true,
     fallbackPayload: badPayload
   });
@@ -64,7 +69,8 @@ test("fallback mode: policy still runs on fallbackPayload", async () => {
     dominant_tag: "own.move.after_move_use",
     allowed_reveal: false,
     current_hint: { style: "full", text: "solution" },
-    full_solution_provided: true
+    full_solution_provided: true,
+    revealed_solution: null
   };
 
   const result = await runStage("coach", packet, {

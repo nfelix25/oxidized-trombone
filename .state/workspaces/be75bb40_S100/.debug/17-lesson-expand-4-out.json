@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "section-4",
+    "type": "worked_example",
+    "content": "ThermoTrack-7’s battery and solar mix makes a perfect canvas for refactoring toward intentional bindings. We start with a constant budget, iteratively mutate actual usage, and strategically shadow values when their interpretation changes.\n```rust\nconst DAILY_ENERGY_BUDGET_KWH: f64 = 9.0;\n\nfn energy_budget_report(initial_solar: f64, furnace_cycles: u32) {\n    let mut net_usage = 0.0; // mutable: we truly accumulate draws\n\n    // Each furnace cycle pulls 0.6 kWh.\n    net_usage += furnace_cycles as f64 * 0.6;\n\n    // Shadow the solar read to convert kWh -> watt-minutes for a dashboard gauge.\n    let solar_kwh = initial_solar; // immutable snapshot for logs\n    let solar_kwh = solar_kwh * 60.0 * 1000.0; // shadowed, now watt-minutes\n\n    // A surge heater may claim a temporary allowance; shadow to mark the deduction result.\n    let remaining_budget = DAILY_ENERGY_BUDGET_KWH - net_usage;\n    let remaining_budget = remaining_budget.max(0.0); // shadowed clamp, no mutation noise\n\n    println!(\n        \"budget={DAILY_ENERGY_BUDGET_KWH} kWh, net={net_usage:.2} kWh, \\\nsolar={solar_kwh:.0} Wh·min, remaining={remaining_budget:.2} kWh\"\n    );\n}\n```\nHere `net_usage` wears `mut` because we truly expect the furnace tally to evolve, while `solar_kwh` is shadowed: the name stays meaningful yet the unit conversion becomes a new binding without risking accidental reuse. `DAILY_ENERGY_BUDGET_KWH` anchors the invariant so any calculation elsewhere compiles against the shared limit. Encourage learners to add more consumers (like a dehumidifier) to see how `mut` clearly signals the hotspots while shadowing keeps derived contexts tidy. Running `energy_budget_report(2.5, 8)` prints a report that respects the constant budget, calls out the accumulated draw, and preserves both raw and converted solar contributions—everything the next pitfall discussion will scrutinize.",
+    "is_complete": false,
+    "next_focus": "Surface common pitfalls such as forgetting `mut`, mixing signed/unsigned integers, or misusing `_` placeholders for unused bindings."
+  }
+}

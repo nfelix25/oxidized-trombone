@@ -1,0 +1,66 @@
+{
+  "schema_version": "context_packet_v1",
+  "packet_id": "8a7b684e-ce9a-414a-8e46-52a0f252c2cc",
+  "timestamp_utc": "2026-02-24T20:09:43.765Z",
+  "role": "starter-expand",
+  "task_type": "starter_expand",
+  "learner_profile": {
+    "masteryLevel": 0
+  },
+  "curriculum_context": {
+    "node_id": "C200",
+    "depth_target": "D2"
+  },
+  "misconception_context": {
+    "top_tags": []
+  },
+  "attempt_context": null,
+  "evidence_context": null,
+  "policy_context": {
+    "allow_reveal": false
+  },
+  "memory_context": {},
+  "scaffold_context": {
+    "scaffold_id": "C200-pointer-depth2",
+    "exercise_description": "Design a D2-level C pointers lab on arithmetic, decay semantics, restrict, and const-correctness, anchored in POSIX buffer handling scenarios with ambitious starter code and thorough behavioral tests.",
+    "lesson_plan": {
+      "section_intents": [
+        "Motivate pointer arithmetic via high-throughput POSIX read buffers in network daemons needing zero-copy slices.",
+        "Clarify byte-addressed memory layout, object lifetimes, and how POSIX APIs like read()/write() expect pointers and lengths.",
+        "Detail rules for pointer arithmetic, difference types, and when results stay within the same allocated object per C17 6.5.6.",
+        "Explain array-to-pointer decay at call boundaries, especially for POSIX functions expecting void* and size arguments.",
+        "Worked example: walk an int buffer returned by read() using pointer increments, computing ptrdiff_t distances safely.",
+        "Introduce restrict-qualified parameters for memcpy-style helpers and how they mirror POSIX memcpy/memmove guarantees.",
+        "Contrast const pointer vs pointer-to-const: demonstrate composing const-correct wrappers over read-only shared memory.",
+        "Worked example: construct readv()-style scatter/gather descriptors while preserving const and restrict promises.",
+        "Pitfalls roundup: UB from overrunning arrays, comparing unrelated pointers, dangling decay results, signal-unsafely sharing restrict-qualified state.",
+        "Compare pointer arithmetic on typed pointers vs void*; highlight when casts are needed and how const/restrict survive conversions.",
+        "Bridge forward: preview how these pointer guarantees enable safer buffer pools and ownership models in upcoming memory-management lessons."
+      ]
+    },
+    "starter_plan": {
+      "file_intents": [
+        "include/pointer_ops.h with four stubs: pointer_offset_diff, safe_ptr_add, array_decay_to_const, wraparound_guard.",
+        "src/restrict_buffers.c with four stubs: restrict_sum, restrict_scale, restrict_memcpy, restrict_alias_window.",
+        "src/const_contracts.c with three stubs: expose_readonly_view, set_config_buffer, mutable_from_void."
+      ]
+    },
+    "test_plan": {
+      "case_intents": [
+        "pointer_offset_diff returns exact element distance for sorted sensor data pulled via read(); UB risk if unchecked subtraction is left empty—flag it.",
+        "safe_ptr_add rejects offsets that escape the original allocation before returning a usable pointer; empty stub would let callers dereference UB—flag it.",
+        "array_decay_to_const preserves element identity by returning the decayed pointer and confirms the source array height ≥4.",
+        "wraparound_guard reports negative distances for candidates before base and positive for in-range ones; empty stub would silently allow UB.",
+        "restrict_sum accumulates two restrict-qualified float arrays without aliasing, matching manual loop totals.",
+        "restrict_scale multiplies src elements into dst without self-aliasing and ensures dst stays untouched when n==0.",
+        "restrict_memcpy copies bytes without overlap (else returns error) to mirror memcpy vs memmove preconditions.",
+        "restrict_alias_window reports true only when the byte ranges are disjoint, reinforcing restrict contracts.",
+        "expose_readonly_view returns a stable const char* slice without letting callers mutate underlying storage.",
+        "set_config_buffer writes value with const-correctness, truncating safely and always adding '\\0'.",
+        "mutable_from_void lawfully casts back to a modifiable pointer only when original payload was non-const; must return NULL otherwise."
+      ]
+    }
+  },
+  "prior_loop_sections": [],
+  "current_sections": []
+}

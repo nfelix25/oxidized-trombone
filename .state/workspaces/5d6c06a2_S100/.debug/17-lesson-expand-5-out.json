@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "section_pitfall_focus",
+    "type": "pitfalls",
+    "content": "Two classic snags show up once learners start mutating readings. First, borrowing rules clash with reassignment:\n```rust\nfn rebalance(mut vents: Vec<i32>) {\n    let peak = vents.iter_mut().max();\n    vents.push(99); // ❌ cannot push while `iter_mut` holds a borrow\n}\n```\nThe compiler answers with `cannot borrow `vents` as mutable because it is also borrowed as mutable`. The fix is to confine the borrow to a smaller scope so the vector becomes free again:\n```rust\nfn rebalance(mut vents: Vec<i32>) {\n    {\n        let peak = vents.iter_mut().max();\n        if let Some(p) = peak {\n            **p = (**p).clamp(0, 80);\n        }\n    } // borrow ends here\n    vents.push(99); // ✅ mutation allowed\n}\n```\nThe second pitfall comes from misunderstanding the unit type. Logging helpers often return `()` implicitly, so comparing them like booleans silently breaks logic:\n```rust\nfn report(message: &str) {\n    println!(\"[log] {message}\");\n}\n\nif report(\"fan on\") { /* ... */ } // ❌ type mismatch\n```\nError: `mismatched types expected bool, found ()`. The fix is either to drop the conditional or make the function return a real signal:\n```rust\nfn report(message: &str) -> bool {\n    println!(\"[log] {message}\");\n    true // ✅ explicit status instead of unit\n}\n```\nTreat unit-returning functions as pure side effects—never as values you can branch on.",
+    "is_complete": false,
+    "next_focus": "Comparison: analyze shadowing vs mutation trade-offs for configuration toggles"
+  }
+}

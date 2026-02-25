@@ -4,13 +4,17 @@ import { fileURLToPath } from "node:url";
 import { runCodexExec } from "./codexExec.js";
 import { validateRoleOutput } from "../validation/schemaValidator.js";
 import { evaluatePolicy, toRejectionResult } from "../policy/engine.js";
+import { getLanguageConfig } from "../config/languages.js";
 
 const STAGE_TO_SCHEMA = {
-  planner: "lesson_plan_v1",
-  author: "exercise_pack_v1",
+  scaffold: "scaffold_v1",
+  "starter-expand": "starter_section_v1",
+  "test-expand": "test_section_v1",
+  "lesson-expand": "lesson_section_v1",
   coach: "hint_pack_v1",
   reviewer: "review_report_v1"
 };
+
 
 const SCHEMA_DIR = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -44,7 +48,9 @@ export async function runStage(stage, packet, options = {}) {
   }
 
   const resolvedSchemaPath = options.schemaPath ?? schemaPathFor(schemaName);
-  const prompt = options.prompt ?? JSON.stringify(packet, null, 2);
+  const langInstructions = getLanguageConfig(options.language ?? "rust").stageInstructions;
+  const instruction = langInstructions[stage] ?? "Generate a JSON object for the following context. Output ONLY the JSON object.\n\nContext packet:";
+  const prompt = options.prompt ?? `${instruction}\n\n${JSON.stringify(packet, null, 2)}`;
   const result = await runCodexExec({
     prompt,
     schemaPath: resolvedSchemaPath,
@@ -107,8 +113,10 @@ function validateStagePayload(schemaName, payload, packet) {
   };
 }
 
-export const runPlannerStage = (packet, options) => runStage("planner", packet, options);
-export const runAuthorStage = (packet, options) => runStage("author", packet, options);
+export const runScaffoldStage = (packet, options) => runStage("scaffold", packet, options);
+export const runStarterExpandStage = (packet, options) => runStage("starter-expand", packet, options);
+export const runTestExpandStage = (packet, options) => runStage("test-expand", packet, options);
+export const runLessonExpandStage = (packet, options) => runStage("lesson-expand", packet, options);
 export const runCoachStage = (packet, options) => runStage("coach", packet, options);
 export const runReviewerStage = (packet, options) => runStage("reviewer", packet, options);
 

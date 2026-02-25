@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "sec-array-decay",
+    "type": "concept",
+    "content": "At every POSIX boundary, arrays silently decay to pointers, so the callee sees only the address of element zero and must rely on an explicit size argument to bound access. When you pass `uint8_t window[2048]` to `read()`, it becomes `uint8_t *` automatically, preserving element type so pointer arithmetic still advances a byte at a time. Decay does not carry the array’s length, nor does it extend the object’s lifetime—those responsibilities stay with the caller. This is why buffer APIs nearly always take `void *buf, size_t len`: the pointer may come from any array type, but the byte count enforces how much storage is actually valid. If you need to expose only a sub-row of a multi-dimensional array, decay again yields the first element of that row, so you must ensure the subarray remains in scope. ```c\n#include <unistd.h>\n#include <stdint.h>\n#include <stddef.h>\n\nssize_t recv_payload(int fd, uint8_t (*grid)[512], size_t rows)\n{\n    if (rows == 0) {\n        return -1;\n    }\n\n    uint8_t *row0 = grid[0];           /* array-to-pointer decay */\n    ssize_t n = read(fd, row0, sizeof(grid[0]));\n    if (n <= 0) {\n        return n;\n    }\n\n    const void *row1_view = grid[1];    /* void* accepts any element type */\n    return write(STDOUT_FILENO, row1_view, (size_t)n);\n}\n```Whenever you cast to `void *`, the element size information disappears entirely, so treat all offsets as raw bytes and reintroduce the correct element type before performing typed arithmetic.",
+    "is_complete": false,
+    "next_focus": "Worked example: walk an int buffer returned by read() using pointer increments, computing ptrdiff_t distances safely."
+  }
+}

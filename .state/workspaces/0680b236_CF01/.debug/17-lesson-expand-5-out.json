@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "worked_example_mixed_arithmetic",
+    "type": "worked_example",
+    "content": "`auto` shines when you mix primitive types, as long as you predict the promotions. Here’s a telemetry snippet that tallies thruster pulses (integers) and combines them with a fractional timing constant:\n```cpp\n#include <iomanip>\n#include <iostream>\n#include <numeric>\n#include <vector>\n\nint main() {\n  const std::vector<int> pulseCounts{1200, 1190, 1215};\n  const double secondsPerPulse = 0.0042; // precise calibration constant\n\n  auto totalPulses = std::accumulate(pulseCounts.begin(),\n                                     pulseCounts.end(), 0LL);\n  const auto totalSeconds = totalPulses * secondsPerPulse;\n  const auto avgPulsesPerSecond =\n      static_cast<double>(totalPulses) / totalSeconds;\n\n  std::cout << \"total pulses: \" << totalPulses << '\\n'\n            << std::fixed << std::setprecision(3)\n            << \"duration: \" << totalSeconds << \" s\\n\"\n            << \"avg pulses/s: \" << avgPulsesPerSecond << '\\n';\n}\n```\nImportant deductions: `std::accumulate` seeds with `0LL`, so `totalPulses` becomes a `long long`, guarding against overflow that would occur with a 32-bit `int`. Multiplying that `long long` by the `double` constant forces `totalSeconds` to be a `double`, capturing fractional time exactly. Without the explicit `static_cast<double>` in the rate calculation, integer division would truncate before promotion, so the cast ensures `avgPulsesPerSecond` stays double-precision. Move the seed to `0` and watch `totalPulses` collapse to `int`, potentially truncating when pulses exceed two billion. This workflow—seed with the widest integral type you need, let `auto` follow the precision of mixed expressions, and cast only at the comparison boundaries—keeps inference transparent while highlighting how arithmetic promotions dictate the final deduced types.",
+    "is_complete": false,
+    "next_focus": "Pitfalls: Investigate cases where `auto` strips references/const, leading to dangling references or UB, plus remedy patterns."
+  }
+}

@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { getLanguageConfig } from "../config/languages.js";
 
 export function runCommand(command, args = [], options = {}) {
   return new Promise((resolve) => {
@@ -31,14 +32,16 @@ export function runCommand(command, args = [], options = {}) {
   });
 }
 
-export function runCargoTest(cwd) {
-  return runCommand("cargo", ["test", "-q"], { cwd });
+export function runLanguageTest(cwd, language = "rust") {
+  const [cmd, ...args] = getLanguageConfig(language).testCommand;
+  return runCommand(cmd, args, { cwd });
 }
 
-export async function runExercise(workspaceDir) {
-  const result = await runCargoTest(workspaceDir);
+export async function runExercise(workspaceDir, language = "rust") {
+  const result = await runLanguageTest(workspaceDir, language);
   return {
     workspaceDir,
+    language,
     command: result.command,
     exitCode: result.code,
     ok: result.ok,

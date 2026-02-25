@@ -15,21 +15,42 @@
     "dominant_tag",
     "allowed_reveal",
     "current_hint",
-    "full_solution_provided"
+    "full_solution_provided",
+    "revealed_solution"
   ],
   "properties": {
-    "schema_version": { "const": "hint_pack_v1" },
-    "role": { "const": "coach" },
+    "schema_version": { "type": "string", "const": "hint_pack_v1" },
+    "role": { "type": "string", "const": "coach" },
     "hint_id": { "type": "string" },
     "exercise_id": { "type": "string" },
     "node_id": { "type": "string" },
     "depth_target": { "type": "string", "enum": ["D1", "D2", "D3"] },
-    "attempt_index": { "type": "integer", "minimum": 1 },
+    "attempt_index": { "type": "integer" },
     "hint_level": { "type": "integer", "enum": [1, 2, 3] },
     "dominant_tag": { "type": "string" },
     "allowed_reveal": { "type": "boolean" },
-    "current_hint": { "type": "object" },
+    "current_hint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["style", "text"],
+      "properties": {
+        "style": { "type": "string" },
+        "text": { "type": "string" }
+      }
+    },
     "full_solution_provided": { "type": "boolean" },
-    "revealed_solution": { "type": "object" }
+    "revealed_solution": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["code"],
+          "properties": {
+            "code": { "type": "string" }
+          }
+        },
+        { "type": "null" }
+      ]
+    }
   }
 }

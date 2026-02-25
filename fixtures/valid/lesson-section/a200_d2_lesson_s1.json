@@ -1,0 +1,9 @@
+{
+  "schema_version": "lesson_section_v1",
+  "role": "lesson-expand",
+  "section_id": "ls_a200_d2_s1",
+  "type": "concept",
+  "content": "## Ownership Transfer\n\nIn Rust, every value has a single owner. When you pass a value to a function, ownership **moves** into that function. The original binding becomes invalid — the compiler enforces this at compile time.\n\n```rust\nlet s = String::from(\"hello\");\nsome_function(s); // s is moved here\n// println!(\"{}\", s); // ERROR: s was moved\n```\n\nTo get the value back, the function must explicitly return it.\n",
+  "is_complete": false,
+  "next_focus": "Add a worked_example showing pass-by-value and return to caller"
+}

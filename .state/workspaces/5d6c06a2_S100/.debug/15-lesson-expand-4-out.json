@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "section_sensor_payload",
+    "type": "worked_example",
+    "content": "We now design a tiny formatter that gathers a motion flag, a Unicode zone label, and paired readings into a single tuple we can ship over the wire.\n```rust\nfn sensor_payload(active: bool, zone_code: u32, temps: (i32, i32)) -> Option<(bool, char, (i32, i32))> {\n    if !active {\n        return None; // silent sensor, no payload emitted\n    }\n\n    let zone_char = char::from_u32(zone_code)?; // Option short-circuits on invalid codes\n    let (celsius, humidity) = temps; // tuple destructuring without mutating the input\n    let validated = (active, zone_char, (celsius, humidity));\n    Some(validated)\n}\n\nfn main() {\n    let payload = sensor_payload(true, 0x0042, (22, 48)).expect(\"active sensor\");\n    assert_eq!(payload.0, true);\n    assert_eq!(payload.1, 'B');\n    let (_, _, readings) = payload;\n    println!(\"Zone {payload:?} => temp {}°C, humidity {}%\", readings.0, readings.1);\n}\n```\nKey takeaways:\n- The boolean `active` controls whether we emit anything; we stick with immutable bindings and let the early `return` express the absence case.\n- `char::from_u32` keeps us honest about Unicode constraints; the `?` operator propagates `None` so callers must handle bad zone codes explicitly.\n- Tuple destructuring copies the readings into locals without mutation, and the final payload reuses the original tuple to avoid reallocation.\n- Pattern matching on the returned tuple (`let (_, _, readings) = payload`) lets each downstream consumer pull out just the components it needs, mirroring the multi-sensor structuring task from the lab.",
+    "is_complete": false,
+    "next_focus": "Pitfall Focus: uncover errors from mixing mutable borrows and reassignment plus misunderstanding unit type"
+  }
+}

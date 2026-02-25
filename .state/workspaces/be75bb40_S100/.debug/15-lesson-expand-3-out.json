@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "section-3",
+    "type": "worked_example",
+    "content": "ThermoTrack-7’s daily summary starts with a crisp pair of temperature streams: the furnace feed relays integers from a coarse sensor every hour, while the precision unit tracks decimals for comfort tuning. Start by anchoring both data sources with the right binding styles.\n```rust\nfn summarize_day() {\n    // Explicit integer typing keeps coarse readings predictable for bit-packed storage.\n    let morning_floor_celsius: i16 = 18; // lowest safe floor temp (°C)\n    let evening_floor_celsius: i16 = 22;\n\n    // Inferred floats capture nuanced swings without extra syntax noise.\n    let morning_room = 18.7_f32;\n    let afternoon_room = morning_room + 2.1; // still f32 by inference\n    let evening_room = afternoon_room - 0.4;\n\n    // Compute spans to surface deltas for downstream alerts.\n    let floor_delta = evening_floor_celsius - morning_floor_celsius; // i16 math\n    let room_delta = evening_room - morning_room; // f32 math\n\n    println!(\n        \"Floor delta: {floor_delta}°C, Room delta: {room_delta:.1}°C\"\n    );\n}\n```\nEvery `let` communicates intent: the coarse readings force an explicit `i16` so maintenance engineers know the sensor’s range, while the room values lean on inference to emphasize the flow of calculations rather than their types. Running `summarize_day()` prints the precise swing for both channels, reinforcing how Rust lets you mix explicitness and inference without sacrificing safety. Encourage learners to tweak the literals (say, simulate a cold snap) and watch the compiler keep integer math separated from floating-point adjustments—exactly the discipline a smart-home report needs before layering on stateful `mut` bindings in later examples.",
+    "is_complete": false,
+    "next_focus": "Worked example 2: refactor an energy-budget tracker to show when to choose `mut`, when to shadow, and how constants keep invariants static."
+  }
+}

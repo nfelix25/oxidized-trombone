@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "section-2",
+    "type": "concept",
+    "content": "Before ThermoTrack-7 crunches reports, we must tame Rust’s vocabulary for binding values. The keyword `let` creates bindings that are *immutable by default*, meaning a morning calibration like `let baseline = 19.5;` cannot be overwritten unless we explicitly opt in with `mut`. That default acts like a safety interlock: if you try to reuse a variable name without shadowing or `mut`, the compiler refuses to compile, catching accidental overwrites before they hit the HVAC hardware. When we genuinely expect a value to evolve—say, accumulating kilowatt-hours over the day—we mark it `let mut energy_used = 0_f64;` so that intent is visible in code review. Constants, introduced with `const`, go a step further by demanding type annotations and becoming globally accessible invariants, perfect for fixed sample sizes or maximum duty cycles. Rust’s type inference fills in the rest; as long as the compiler sees enough information on the right-hand side, `let humidity_percent = 42u8;` needs no explicit type. Putting these pieces together feels like wiring a control panel: each binding has a clear role, the mutable ones are labeled as such, and the constants keep every module aligned on shared constraints.\n```rust\nconst MAX_DAILY_LOGS: usize = 96; // 24 hours × 4 readings per hour\n\nfn prepare_metrics() {\n    let calibration_celsius: f64 = 19.5; // explicit type for clarity\n    let mut energy_used = 0.0;          // inferred f64, but mutable for accumulation\n    energy_used += 1.25;\n    println!(\"baseline={calibration_celsius}, energy={energy_used}, slots={MAX_DAILY_LOGS}\");\n}\n```\nThis trio—`let`, `mut`, and `const`—forms the contract every later control-flow structure depends on.",
+    "is_complete": false,
+    "next_focus": "Worked example 1: walk through modeling daily temperature readings using `let` bindings with explicit vs inferred integer/float types."
+  }
+}

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { seedCurriculum } from "../src/curriculum/seed.js";
+import { allCurricula as seedCurriculum } from "../src/curriculum/allCurricula.js";
 import { getEligibleNextNodes, mapCustomTopic, prerequisiteGapReport } from "../src/curriculum/selectors.js";
 import { createAttemptState, recordAttempt, recordHintUsage } from "../src/runtime/attempts.js";
 import { mergeReviewIntoAttempt } from "../src/runtime/reviewIntegration.js";

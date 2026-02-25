@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "concept_primitive_types_initialization",
+    "type": "concept",
+    "content": "Before caring about `auto`, anchor on the four primitive workhorses that every deduction funnels through: `int` for whole counts, `double` for fractional telemetry, `bool` for control flags, and `char` for byte-sized symbols. Each has multiple initialization styles, and the style determines whether `auto` can mirror your intent or betrays it with narrowing. Brace initialization (`{}`) is the most defensive because it rejects narrowing outright; copy (`=`) and direct `()` initialization allow implicit conversions, so the compiler may quietly trim data. Consider this small diagnostic harness:\n```cpp\nint packets = 120;            // copy-init, OK: literal fits in int\ndouble energy{42.75};        // brace-init, forbids accidental truncation\nbool ready = true;            // copy-init from bool literal stays bool\nchar status('A');             // direct-init from character literal\nauto ratio = packets / energy;      // deduced double because energy is double\nauto flag = bool{status == 'A'};    // deduced bool; brace guards against typo narrowing\nauto symbol = char{ready ? 'Y' : 'N'}; // deduced char explicitly\n```\nWhen primitives are initialized deliberately, `auto` becomes a faithful stenographer of the expression’s true type rather than a wildcard. Conversely, letting `auto` deduce from a bare literal (`auto id = 0;`) defaults to `int`, which may clash later if you mix it with doubles or expect a distinct character encoding. Treat initialization style as the contract that informs inference before we add templates or optional flags to the mix.",
+    "is_complete": false,
+    "next_focus": "Tooling: Demonstrate how `auto` deduces types from initializer expressions, including reading compiler diagnostics."
+  }
+}

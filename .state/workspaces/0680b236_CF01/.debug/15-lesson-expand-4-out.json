@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "worked_example_const_auto_for",
+    "type": "worked_example",
+    "content": "Watch how `const auto&` keeps telemetry frames immutable while still letting us categorize them:\n```cpp\n#include <array>\n#include <cstdint>\n#include <iostream>\n#include <numeric>\n\nstruct Frame {\n  std::uint32_t id;\n  double voltage;\n};\n\nint main() {\n  const std::array<Frame, 3> frames{{\n      {1001u, 4.98},\n      {1002u, 4.65},\n      {1003u, 5.05},\n  }};\n\n  std::size_t overSpec = 0;\n  double totalVoltage = 0.0;\n\n  for (const auto& frame : frames) {     // deduces const Frame&\n    if (frame.voltage > 5.0) {\n      ++overSpec;\n    }\n    totalVoltage += frame.voltage;        // safe: frame is read-only\n  }\n\n  const auto average = totalVoltage / frames.size();\n  std::cout << overSpec << \" frames exceed spec; avg=\" << average << '\\n';\n}\n```\nKey deductions: the `frames` container is `const`, so `const auto&` binds to each element without copying. Mutating `frame.voltage` would be a compile-time error, preserving invariants while still permitting accumulation via separate `auto` temporaries (`overSpec`, `totalVoltage`). Try swapping the loop header to `for (auto frame : frames)` and your compiler copies every `Frame`, making edits silently mutate only the local copy—exactly the kind of bug that hides in reviews. Hovering or adding `static_assert(std::is_same_v<decltype(frame), const Frame&>);` confirms the inference. This pattern scales to STL views: `for (const auto& reading : std::as_const(readings))` guarantees analysts can read telemetry, categorize it, and feed aggregates downstream without risking accidental writes, a critical habit before we layer templates and optionals onto our loops.",
+    "is_complete": false,
+    "next_focus": "Worked Example 2: Showcase `auto` with arithmetic expressions mixing ints and doubles; highlight precision and promotion."
+  }
+}

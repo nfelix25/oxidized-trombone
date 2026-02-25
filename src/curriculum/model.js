@@ -7,7 +7,8 @@ export function createNode({
   depthTarget,
   prerequisites = [],
   misconceptionTags = [],
-  keywords = []
+  keywords = [],
+  language = "rust"
 }) {
   if (!id || !title) {
     throw new Error("Node requires id and title");
@@ -26,7 +27,8 @@ export function createNode({
     depthTarget,
     prerequisites,
     misconceptionTags,
-    keywords
+    keywords,
+    language
   };
 }
 

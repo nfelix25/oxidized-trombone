@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "section_shadow_vs_mut",
+    "type": "comparison",
+    "content": "Two ways exist to flip a configuration flag when a technician overrides defaults. Mutation keeps a single binding but requires `mut`:\n```rust\nfn mutate_turbo(mut turbo_mode: bool) -> bool {\n    if needs_boost() {\n        turbo_mode = true; // state change happens in place\n    }\n    turbo_mode\n}\n```\nPros: downstream code keeps borrowing rules simple—everybody references the same mutable slot. Cons: once shared mutability sneaks in, you must guard against aliasing and lifetime hassles; passing `turbo_mode` by reference now demands `&mut bool` and excludes other borrows.\n\nShadowing creates fresh bindings at each decision point while keeping every binding immutable:\n```rust\nfn shadow_turbo(turbo_mode: bool) -> bool {\n    let turbo_mode = if needs_boost() { true } else { turbo_mode };\n    let turbo_mode = if manual_override() { false } else { turbo_mode };\n    turbo_mode\n}\n```\nHere each `let turbo_mode = ...;` reuses the name yet produces a brand-new value, so earlier versions remain untouched. Pros: callers still pass plain `bool`, and there is no mutable borrow to juggle. Cons: shadowing copies data (cheap for scalars, costly for buffers) and makes it harder to observe history because the previous value is inaccessible unless you rename it first.\n\nRule of thumb: prefer shadowing when each transformation is a pure recalculation, but switch to mutation when one binding must be shared with code expecting to poke it in place (e.g., toggling a GPIO register).",
+    "is_complete": false,
+    "next_focus": "Bridge: foreshadow how disciplined bindings support upcoming control-flow decisions and ownership rules"
+  }
+}

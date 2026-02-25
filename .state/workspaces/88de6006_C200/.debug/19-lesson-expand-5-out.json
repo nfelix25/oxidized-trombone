@@ -1,0 +1,13 @@
+{
+  "accepted": true,
+  "schemaName": "lesson_section_v1",
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "sec-int-buffer-walk",
+    "type": "worked_example",
+    "content": "We now turn the rules into practice by walking an `int` buffer filled via `read()` and computing distances between cursors using `ptrdiff_t`. The example below performs one blocking read from a sensor pipe, scans the resulting integers until their cumulative sum breaches a threshold, and reports how many elements were consumed. Every pointer arithmetic step stays inside the allocation, and subtracting pointers only happens when they originate from that same block.\n```c\n#include <unistd.h>\n#include <stddef.h>\n#include <stdint.h>\n#include <stdio.h>\n#include <errno.h>\n\n#define SAMPLE_CAP 256\n#define TRIPWIRE   1000\n\nint main(void)\n{\n    static int samples[SAMPLE_CAP];\n    ssize_t bytes = read(STDIN_FILENO, samples, sizeof(samples));\n    if (bytes < 0) {\n        perror(\"read\");\n        return 1;\n    }\n    size_t filled = (size_t)bytes / sizeof(samples[0]);\n\n    int *cursor = samples;\n    int *limit  = samples + filled; /* one-past-the-last written element */\n    int *trip   = cursor;\n    long total  = 0;\n\n    while (cursor < limit && total < TRIPWIRE) {\n        total += *cursor;\n        cursor += 1; /* advances one int at a time */\n    }\n\n    ptrdiff_t consumed = cursor - trip; /* well-defined difference */\n    printf(\"sum=%ld across %td ints\\n\", total, consumed);\n\n    if (cursor < limit) {\n        ptrdiff_t remaining = limit - cursor;\n        printf(\"%td ints remain for later processing\\n\", remaining);\n    }\n    return 0;\n}\n```\nKey takeaways: (1) convert the byte count returned by `read()` into an element count before stepping through the buffer, (2) keep a stable `trip` pointer anchored to the same object so the subtraction `cursor - trip` yields an accurate `ptrdiff_t`, and (3) treat the `limit` pointer as the sole guard for every increment, ensuring no cursor walks past the region the kernel actually populated.",
+    "is_complete": false,
+    "next_focus": "Introduce restrict-qualified parameters for memcpy-style helpers and how they mirror POSIX memcpy/memmove guarantees."
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scaffold_v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "role",
+    "scaffold_id",
+    "node_id",
+    "depth_target",
+    "lesson_plan",
+    "starter_plan",
+    "test_plan",
+    "exercise_description"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "const": "scaffold_v1" },
+    "role": { "type": "string", "const": "scaffold" },
+    "scaffold_id": { "type": "string" },
+    "node_id": { "type": "string" },
+    "depth_target": { "type": "string", "enum": ["D1", "D2", "D3"] },
+    "lesson_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["section_intents"],
+      "properties": {
+        "section_intents": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "starter_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file_intents"],
+      "properties": {
+        "file_intents": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "test_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_intents"],
+      "properties": {
+        "case_intents": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "exercise_description": { "type": "string" }
+  }
+}

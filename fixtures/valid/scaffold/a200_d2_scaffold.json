@@ -1,0 +1,26 @@
+{
+  "schema_version": "scaffold_v1",
+  "role": "scaffold",
+  "scaffold_id": "sc_a200_d2_001",
+  "node_id": "A200",
+  "depth_target": "D2",
+  "lesson_plan": {
+    "section_intents": [
+      "concept: explain ownership transfer at function boundaries",
+      "worked_example: pass String to function and return it",
+      "pitfalls: using a value after it has been moved",
+      "bridge: connect ownership semantics to the exercise"
+    ]
+  },
+  "starter_plan": {
+    "file_intents": [
+      "src/lib.rs: stub function take_and_return(s: String) -> String"
+    ]
+  },
+  "test_plan": {
+    "case_intents": [
+      "tests/tests.rs: test that take_and_return returns the same string"
+    ]
+  },
+  "exercise_description": "Implement take_and_return which takes a String by value and returns it, demonstrating ownership transfer in and out of a function."
+}

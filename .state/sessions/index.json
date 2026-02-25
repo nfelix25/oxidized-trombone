@@ -1,0 +1,25 @@
+[
+  {
+    "id": "88de6006-71fe-44be-b362-bc81b8978830",
+    "nodeId": "C200",
+    "language": "c",
+    "startedAt": "2026-02-24T20:09:29.160Z",
+    "lastAccessedAt": "2026-02-24T21:10:43.450Z"
+  },
+  {
+    "id": "be75bb40-0d23-4bf6-9623-41e151354783",
+    "nodeId": "S100",
+    "language": "rust",
+    "workspaceDir": "/Users/noelfelix/Code/oxidized-trombone/.state/workspaces/be75bb40_S100",
+    "startedAt": "2026-02-24T23:08:48.081Z",
+    "lastAccessedAt": "2026-02-24T23:11:31.589Z"
+  },
+  {
+    "id": "0680b236-ebca-4baa-9a9c-a18a5852e011",
+    "nodeId": "CF01",
+    "language": "cpp",
+    "workspaceDir": "/Users/noelfelix/Code/oxidized-trombone/.state/workspaces/0680b236_CF01",
+    "startedAt": "2026-02-25T00:30:30.318Z",
+    "lastAccessedAt": "2026-02-25T00:38:50.655Z"
+  }
+]

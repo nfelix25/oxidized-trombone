@@ -1,0 +1,102 @@
+{
+  "schema_version": "context_packet_v1",
+  "packet_id": "bdbfb71f-8dcb-4af4-8605-52f02bf8e56d",
+  "timestamp_utc": "2026-02-24T18:53:45.382Z",
+  "role": "lesson-expand",
+  "task_type": "lesson_expand",
+  "learner_profile": {
+    "masteryLevel": 0
+  },
+  "curriculum_context": {
+    "node_id": "S100",
+    "depth_target": "D1"
+  },
+  "misconception_context": {
+    "top_tags": []
+  },
+  "attempt_context": null,
+  "evidence_context": null,
+  "policy_context": {
+    "allow_reveal": false
+  },
+  "memory_context": {},
+  "scaffold_context": {
+    "scaffold_id": "scaf_S100_vars_types_mut",
+    "exercise_description": "Design a multi-file Rust mini-lab where learners tame smart-home readings using careful binding declarations, exploring mutability, constants, type inference, and shadowing with numeric, boolean, character, tuple, and unit values in preparation for richer stateful programs.",
+    "lesson_plan": {
+      "section_intents": [
+        "Hook: contrast immutable vs mutable binding in a playful thermostat example",
+        "Concept: introduce `let`, `mut`, and `const` syntax plus type inference defaults",
+        "Worked Example 1: step through creating typed numeric bindings (`i32`, `u64`, `f64`) and observing implicit conversions",
+        "Worked Example 2: model booleans, chars, and tuples through a mini sensor payload structuring task",
+        "Pitfall Focus: uncover errors from mixing mutable borrows and reassignment plus misunderstanding unit type",
+        "Comparison: analyze shadowing vs mutation trade-offs for configuration toggles",
+        "Bridge: foreshadow how disciplined bindings support upcoming control-flow decisions and ownership rules"
+      ]
+    },
+    "starter_plan": {
+      "file_intents": [
+        "src/bindings.rs: stubs `init_temperature`, `toggle_power_state`, `freeze_level`, `shadow_demo`, `const_identifier`, `unit_logger`",
+        "src/types.rs: stubs `max_u64_sensor`, `avg_f64_readings`, `char_from_code`, `tuple_swap`, `bool_gate`"
+      ]
+    },
+    "test_plan": {
+      "case_intents": [
+        "bindings::init_temperature returns immutable `i32` default and rejects mutation attempts",
+        "bindings::toggle_power_state flips a mutable `bool` binding and persists state change",
+        "bindings::freeze_level uses `const` with explicit type and prevents reassignment",
+        "bindings::shadow_demo shows value change via shadowing without mutating original binding",
+        "bindings::const_identifier enforces uppercase naming and compile-time literal assignment",
+        "bindings::unit_logger emits `()` and proves side-effect-only execution",
+        "types::max_u64_sensor clamps to `u64::MAX` when overflow would occur",
+        "types::avg_f64_readings keeps double precision and handles empty slice via `Option`",
+        "types::char_from_code safely converts `u32` to `char` or errors on invalid scalar value",
+        "types::tuple_swap swaps `(i32, bool)` elements without mutation using pattern matching"
+      ]
+    }
+  },
+  "prior_loop_sections": [
+    {
+      "schema_version": "starter_section_v1",
+      "role": "starter-expand",
+      "section_id": "section_bindings",
+      "type": "file",
+      "file_path": "bindings.rs",
+      "content": "#![allow(dead_code)]\n\n/// Demonstrates that `let` bindings are immutable by default and should return a preset `i32`.\n/// Implement by declaring an immutable indoor temperature and handing the value back untouched.\npub fn init_temperature() -> i32 {\n    // TODO: Declare an immutable reading and return it.\n    todo!()\n}\n\n/// Highlights the `mut` keyword by letting a boolean binding flip states before being returned.\n/// Implement by toggling the provided power flag and persisting the mutated result.\npub fn toggle_power_state(current: bool) -> bool {\n    // TODO: Copy the flag into a mutable binding, toggle it, and return the outcome.\n    todo!()\n}\n\n/// Reinforces `const` declarations with explicit types for freezing thresholds.\n/// Implement by defining a constant freeze level and making the function expose it.\npub fn freeze_level() -> i32 {\n    // TODO: Declare a typed const inside or outside the function and surface its value.\n    todo!()\n}\n\n/// Explores shadowing by reusing the same identifier for transformed numeric readings.\n/// Implement by deriving successive bindings that change the value without mutating the original.\npub fn shadow_demo(reading: i32) -> i32 {\n    // TODO: Shadow the input with new bindings and return the final value.\n    todo!()\n}\n\n/// Emphasizes uppercase `const` naming and compile-time literals for identifiers.\n/// Implement by exposing a string slice tied to a `const` that follows style guidelines.\npub fn const_identifier() -> &'static str {\n    // TODO: Define the const identifier literal and return it here.\n    todo!()\n}\n\n/// Showcases the unit type by logging side effects while returning `()` explicitly.\n/// Implement by emitting diagnostics or counters and finishing with the unit value.\npub fn unit_logger(message: &str) {\n    // TODO: Perform some observable action, then end with () implicitly or explicitly.\n    todo!()\n}\n",
+      "is_complete": false,
+      "next_focus": "Add the types.rs stubs covering numeric, boolean, char, and tuple patterns."
+    },
+    {
+      "schema_version": "starter_section_v1",
+      "role": "starter-expand",
+      "section_id": "section_types",
+      "type": "file",
+      "file_path": "types.rs",
+      "content": "#![allow(dead_code)]\n\n/// Demonstrates explicit numeric typing by capping wide readings into a `u64` domain.\n/// Implement by finding the largest `u128` in `candidates` and clamping it to `u64::MAX` when necessary.\npub fn max_u64_sensor(candidates: &[u128]) -> u64 {\n    // TODO: Determine the maximum reading and prevent overflow beyond `u64::MAX`.\n    todo!()\n}\n\n/// Highlights floating-point type inference and the Option pattern for potentially missing data.\n/// Implement by returning `Some` average of `values` as an `f64` or `None` when the slice is empty.\npub fn avg_f64_readings(values: &[f64]) -> Option<f64> {\n    // TODO: Sum with `f64` precision, divide by the count, and wrap the result in `Option`.\n    todo!()\n}\n\n/// Covers `char` construction from scalar values while validating Unicode boundaries.\n/// Implement by converting `code` to a `char` via `char::from_u32` and bubbling up invalid inputs.\npub fn char_from_code(code: u32) -> Option<char> {\n    // TODO: Attempt the conversion and return `None` when the scalar value is disallowed.\n    todo!()\n}\n\n/// Reinforces tuple destructuring and reconstruction without mutating the original binding.\n/// Implement by pattern matching `(i32, bool)` and returning `(bool, i32)` in swapped order.\npub fn tuple_swap(pair: (i32, bool)) -> (bool, i32) {\n    // TODO: Use pattern matching to reorder the elements immutably.\n    todo!()\n}\n\n/// Explores boolean gate composition with strongly typed operands and return values.\n/// Implement by combining `lhs` and `rhs` using a chosen gate (e.g., AND/OR) and exposing the resulting `bool`.\npub fn bool_gate(lhs: bool, rhs: bool) -> bool {\n    // TODO: Pick a gate operation, document it, and return the evaluated boolean.\n    todo!()\n}\n",
+      "is_complete": true,
+      "next_focus": "Starter files complete; await further scaffolding instructions."
+    },
+    {
+      "schema_version": "test_section_v1",
+      "role": "test-expand",
+      "section_id": "section_bindings_types_tests",
+      "type": "file",
+      "file_path": "bindings_types.rs",
+      "content": "use exercise::bindings::{const_identifier, freeze_level, init_temperature, shadow_demo, toggle_power_state, unit_logger};\nuse exercise::types::{avg_f64_readings, char_from_code, max_u64_sensor, tuple_swap};\n\n#[test]\nfn init_temperature_provides_consistent_default() {\n    let baseline = init_temperature();\n    assert_eq!(baseline, 72, \"default indoor temperature should be 72F\");\n    let duplicated = baseline;\n    let mut mutated = duplicated;\n    mutated += 5;\n    assert_eq!(baseline, init_temperature(), \"immutable binding should remain stable across invocations\");\n    assert_ne!(baseline, mutated, \"mutating a copy must not retroactively alter the original binding\");\n}\n\n#[test]\nfn toggle_power_state_flips_flag_and_persists() {\n    assert_eq!(toggle_power_state(true), false, \"mutable bool binding should flip from true to false\");\n    assert_eq!(toggle_power_state(false), true, \"mutable bool binding should flip from false to true\");\n    for state in [true, false] {\n        let flipped_once = toggle_power_state(state);\n        let flipped_twice = toggle_power_state(flipped_once);\n        assert_eq!(flipped_twice, state, \"toggling twice should demonstrate state persistence on the mutable binding\");\n    }\n}\n\n#[test]\nfn freeze_level_relies_on_constant_threshold() {\n    let first = freeze_level();\n    let second = freeze_level();\n    assert_eq!(first, 32, \"freeze level constant should be 32F\");\n    assert_eq!(first, second, \"const value should return identically on every call\");\n}\n\n#[test]\nfn shadow_demo_converts_celsius_to_fahrenheit() {\n    assert_eq!(shadow_demo(25), 77, \"shadow workflow should convert 25C to 77F\");\n    assert_eq!(shadow_demo(-40), -40, \"shadow workflow should preserve the unique -40C to -40F crossover\");\n    let freezing_point = shadow_demo(0);\n    assert_eq!(freezing_point, 32, \"shadow workflow should convert 0C to 32F\");\n    assert!(freezing_point > 0, \"converted freezing point should be above zero thanks to the shadowed offset\");\n}\n\n#[test]\nfn const_identifier_uses_uppercase_literal() {\n    let identifier = const_identifier();\n    assert_eq!(identifier, \"THERMOSTAT_CORE\", \"const identifier should expose the uppercase literal name\");\n    assert!(identifier.chars().all(|c| c.is_ascii_uppercase() || c == '_'), \"identifier must remain uppercase snake case to signal const style\");\n}\n\n#[test]\nfn unit_logger_returns_unit_type() {\n    let first = unit_logger(\"calibrating humidity sensor\");\n    assert_eq!(first, (), \"unit_logger should return () to signal side-effect only behavior\");\n    let second = unit_logger(\"calibrating humidity sensor\");\n    assert_eq!(second, (), \"unit_logger should consistently return () even across repeated invocations\");\n}\n\n#[test]\nfn max_u64_sensor_caps_extreme_values() {\n    let readings = [u128::from(u64::MAX) + 42, 1, 99];\n    let clamped = max_u64_sensor(&readings);\n    assert_eq!(clamped, u64::MAX, \"values beyond u64::MAX must clamp to the ceiling\");\n    assert!(clamped <= u64::MAX, \"clamped output must never exceed the maximum representable bound\");\n    let safe_values = [42_u128, 1024_u128, 65535_u128];\n    assert_eq!(max_u64_sensor(&safe_values), 65535, \"when within range, the precise maximum should be returned\");\n}\n\n#[test]\nfn avg_f64_readings_handles_empty_and_precise_values() {\n    assert_eq!(avg_f64_readings(&[]), None, \"empty slice should return None to signal missing data\");\n    let values = [72.5_f64, 73.5_f64, 70.0_f64];\n    let avg = avg_f64_readings(&values).expect(\"average should be present for non-empty slices\");\n    assert_eq!(avg, 72.0, \"average of the provided readings should remain exactly 72.0\");\n    let min = values.iter().fold(f64::INFINITY, |acc, &v| acc.min(v));\n    let max = values.iter().fold(f64::NEG_INFINITY, |acc, &v| acc.max(v));\n    assert!(avg >= min && avg <= max, \"average must land within the inclusive range of the inputs\");\n}\n\n#[test]\nfn char_from_code_validates_scalar_range() {\n    assert_eq!(char_from_code(0x0041), Some('A'), \"valid ASCII scalar should convert to its char representation\");\n    let highest = char::from_u32(0x10FFFF).expect(\"highest Unicode scalar should exist\");\n    assert_eq!(char_from_code(0x10FFFF), Some(highest), \"highest Unicode scalar must be accepted\");\n    assert_eq!(char_from_code(0x110000), None, \"values beyond Unicode range should return None\");\n}\n\n#[test]\nfn tuple_swap_is_involution() {\n    assert_eq!(tuple_swap((7, true)), (true, 7), \"tuple_swap should flip the i32 and bool positions\");\n    let original = (-12, false);\n    assert_eq!(tuple_swap(tuple_swap(original)), original, \"swapping twice should restore the original tuple without mutation\");\n}\n",
+      "is_complete": true,
+      "next_focus": "All case intents satisfied."
+    }
+  ],
+  "current_sections": [
+    {
+      "schema_version": "lesson_section_v1",
+      "role": "lesson-expand",
+      "section_id": "section_hook",
+      "type": "concept",
+      "content": "You walk into our smart-home lab and the thermostat greets you with two numbers: the promised comfort goal and the fickle air it actually feels. In Rust terms, those two experiences map to two different bindings. The target temperature is announced once and treated as law: `let setpoint = 72;`. Because `let` without extras is immutable, the compiler guarantees no later line will nudge that number—perfect for a safety-critical promise. The air sensor, however, needs wiggle room as vents open and close. We capture that with a mutable binding: \n```rust\nlet mut current = 76; // noisy reading that must adapt\ncurrent -= 2; // blower kicks in\nprintln!(\"Setpoint: {setpoint}°F, Current: {current}°F\");\n```\nTry swapping the keywords—making `setpoint` mutable or removing `mut` from `current`—and Rust immediately objects, reminding us exactly which values may drift. This playful thermostat contrast sets the tone for the lab: identify which readings must never change, mark them immutable, and reserve `mut` for the rare spots where state truly evolves. Once you feel that tension, the rest of Rust’s binding rules click into place.",
+      "is_complete": false,
+      "next_focus": "Introduce `let`, `mut`, and `const` syntax along with type inference defaults."
+    }
+  ],
+  "next_focus": "Introduce `let`, `mut`, and `const` syntax along with type inference defaults."
+}

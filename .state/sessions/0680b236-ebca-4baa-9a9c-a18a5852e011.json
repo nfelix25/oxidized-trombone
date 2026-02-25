@@ -1,0 +1,29 @@
+{
+  "sessionId": "0680b236-ebca-4baa-9a9c-a18a5852e011",
+  "startedAt": "2026-02-25T00:30:30.318Z",
+  "mode": "guided",
+  "nodeId": "CF01",
+  "language": "cpp",
+  "masteryState": {
+    "byNode": {},
+    "history": []
+  },
+  "misconceptionState": {
+    "attempts": [],
+    "counts": {}
+  },
+  "attempts": [],
+  "exerciseId": "e8a0c2c8-7259-4c90-9a30-11f15d2c003d",
+  "lessonFile": "/Users/noelfelix/Code/oxidized-trombone/.state/workspaces/0680b236_CF01/LESSON.md",
+  "workspaceDir": "/Users/noelfelix/Code/oxidized-trombone/.state/workspaces/0680b236_CF01",
+  "attemptState": {
+    "exerciseId": "e8a0c2c8-7259-4c90-9a30-11f15d2c003d",
+    "attemptIndex": 0,
+    "hintLevelUsed": 0,
+    "elapsedMinutes": 0,
+    "history": [],
+    "reviews": []
+  },
+  "lastHintPack": null,
+  "status": "active"
+}
