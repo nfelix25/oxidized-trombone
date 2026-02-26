@@ -1,0 +1,66 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 20px;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.label {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+.toggle {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-muted);
+  font-size: 0.8em;
+  padding: 4px 8px;
+}
+
+.log {
+  width: 700px;
+  max-width: 90vw;
+  max-height: 300px;
+  overflow-y: auto;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+}
+
+.logLine {
+  display: flex;
+  gap: 10px;
+  color: var(--text-muted);
+}
+
+.logTime {
+  color: var(--accent);
+  flex-shrink: 0;
+}

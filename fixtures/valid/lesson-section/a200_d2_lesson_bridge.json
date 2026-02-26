@@ -2,6 +2,7 @@
   "schema_version": "lesson_section_v1",
   "role": "lesson-expand",
   "section_id": "ls_a200_d2_bridge",
+  "section_title": "Bridge",
   "type": "bridge",
   "content": "## Bridge to Exercise\n\nThe exercise asks you to implement `take_and_return(s: String) -> String`. Apply what you just learned: the function signature already tells you ownership comes in — your job is to return it so the caller gets it back.\n\n```rust\npub fn take_and_return(s: String) -> String {\n    // your implementation here\n}\n```\n\nThe test in `tests/tests.rs` checks that the returned value equals the original string. Once ownership is returned correctly, the test passes.\n",
   "is_complete": true,

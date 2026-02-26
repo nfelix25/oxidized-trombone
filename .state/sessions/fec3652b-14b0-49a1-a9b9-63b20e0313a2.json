@@ -1,0 +1,30 @@
+{
+  "sessionId": "fec3652b-14b0-49a1-a9b9-63b20e0313a2",
+  "startedAt": "2026-02-26T07:29:25.078Z",
+  "mode": "guided",
+  "nodeId": "JM01",
+  "language": "javascript",
+  "provider": "codex",
+  "masteryState": {
+    "byNode": {},
+    "history": []
+  },
+  "misconceptionState": {
+    "attempts": [],
+    "counts": {}
+  },
+  "attempts": [],
+  "exerciseId": "JM01-D2-20260226",
+  "lessonFile": "/Users/noelfelix/Code/oxidized-trombone/.state/workspaces/fec3652b_JM01/LESSON.md",
+  "workspaceDir": "/Users/noelfelix/Code/oxidized-trombone/.state/workspaces/fec3652b_JM01",
+  "attemptState": {
+    "exerciseId": "JM01-D2-20260226",
+    "attemptIndex": 0,
+    "hintLevelUsed": 0,
+    "elapsedMinutes": 0,
+    "history": [],
+    "reviews": []
+  },
+  "lastHintPack": null,
+  "status": "active"
+}

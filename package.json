@@ -7,6 +7,14 @@
     "test": "node --test",
     "test:fixtures": "node src/fixtures/harness.js",
     "seed:a203": "node src/seed/a203Flow.js",
-    "session": "node src/session/cli.js"
+    "session": "node src/session/cli.js",
+    "serve": "node src/server/index.js",
+    "dev:server": "node --watch src/server/index.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
   }
 }

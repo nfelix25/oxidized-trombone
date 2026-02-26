@@ -1,0 +1,94 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+}
+
+.statusBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 16px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  flex-shrink: 0;
+}
+
+.nodeId { color: var(--accent); font-weight: 700; }
+.lang { color: var(--text-muted); }
+.depth { color: var(--text-muted); }
+.stat { color: var(--text-muted); }
+.save { color: var(--text-muted); margin-left: auto; }
+
+.statusActions {
+  display: flex;
+  gap: 8px;
+}
+
+.statusActions button {
+  font-size: 0.85em;
+  padding: 3px 10px;
+}
+
+.panes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 220px;
+  flex: 1;
+  overflow: hidden;
+  gap: var(--pane-gap);
+}
+
+/* coding mode: lesson hidden, editor full width */
+.panes.coding {
+  grid-template-columns: 1fr;
+}
+
+/* reviewing mode: feedback pane taller */
+.panes.reviewing {
+  grid-template-rows: 1fr 360px;
+}
+
+.lessonPane {
+  grid-row: 1;
+  grid-column: 1;
+  overflow: hidden;
+}
+
+.editorPane {
+  grid-row: 1;
+  grid-column: 2;
+  overflow: hidden;
+}
+
+/* When coding mode, editor takes full row */
+.panes.coding .editorPane {
+  grid-column: 1;
+}
+
+.feedbackPane {
+  grid-row: 2;
+  grid-column: 1 / -1;
+  overflow: hidden;
+}
+
+/* Summary */
+.summaryPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+}

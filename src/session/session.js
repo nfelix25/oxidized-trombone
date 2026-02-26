@@ -6,12 +6,21 @@ import { createMisconceptionState } from "../mastery/misconceptions.js";
 import { selectLanguage, createPrompt } from "./modeSelect.js";
 import { runGuidedNav } from "./guidedNav.js";
 import { printSessionSummary } from "./summary.js";
-import { allCurricula, getCurriculumForLanguage } from "../curriculum/allCurricula.js";
+import {
+  allCurricula,
+  getCurriculumForLanguage,
+} from "../curriculum/allCurricula.js";
 import { getNode } from "../curriculum/model.js";
 import { loadCustomTopics } from "./customTopics.js";
 import { runSessionPicker } from "./sessionPicker.js";
 import { recommendNextNodes } from "../mastery/recommend.js";
-import { setupExercise, runAttempt, requestHint, requestReview, runDebugStage } from "./exerciseLoop.js";
+import {
+  setupExercise,
+  runAttempt,
+  requestHint,
+  requestReview,
+  runDebugStage,
+} from "./exerciseLoop.js";
 
 const SESSION_INDEX_KEY = "index";
 const LEGACY_SESSION_KEY = "active_session";
@@ -30,25 +39,36 @@ async function loadGlobalMastery() {
   return stored?.byNode ?? {};
 }
 
-async function saveGlobalMastery(sessionMasteryState) {
+export async function saveGlobalMastery(sessionMasteryState) {
   const global = await loadGlobalMastery();
-  const touchedNodes = new Set(sessionMasteryState.history.map((h) => h.nodeId));
+  const touchedNodes = new Set(
+    sessionMasteryState.history.map((h) => h.nodeId),
+  );
   const merged = {
     ...global,
     ...Object.fromEntries(
-      Object.entries(sessionMasteryState.byNode).filter(([id]) => touchedNodes.has(id))
-    )
+      Object.entries(sessionMasteryState.byNode).filter(([id]) =>
+        touchedNodes.has(id),
+      ),
+    ),
   };
   await progressStorage().write(GLOBAL_MASTERY_KEY, { byNode: merged });
 }
 
-export function createNewSession(mode, nodeId, globalMasteryByNode = {}, language = "rust") {
+export function createNewSession(
+  mode,
+  nodeId,
+  globalMasteryByNode = {},
+  language = "rust",
+  provider = "codex",
+) {
   return {
     sessionId: randomUUID(),
     startedAt: new Date().toISOString(),
     mode,
     nodeId: nodeId ?? null,
     language,
+    provider,
     masteryState: createMasteryState(globalMasteryByNode),
     misconceptionState: createMisconceptionState(),
     attempts: [],
@@ -57,7 +77,7 @@ export function createNewSession(mode, nodeId, globalMasteryByNode = {}, languag
     workspaceDir: null,
     attemptState: null,
     lastHintPack: null,
-    status: "active"
+    status: "active",
   };
 }
 
@@ -97,7 +117,7 @@ export async function loadSession(storage) {
     // Update lastAccessedAt for this entry in the index
     const now = new Date().toISOString();
     const updatedIndex = index.map((e) =>
-      e.id === mostRecentId ? { ...e, lastAccessedAt: now } : e
+      e.id === mostRecentId ? { ...e, lastAccessedAt: now } : e,
     );
     await storage.write(SESSION_INDEX_KEY, updatedIndex);
   }
@@ -118,7 +138,7 @@ export async function saveSession(storage, session) {
     language: session.language ?? "rust",
     workspaceDir: session.workspaceDir ?? null,
     startedAt: session.startedAt,
-    lastAccessedAt: now
+    lastAccessedAt: now,
   };
 
   const idx = existingIndex.findIndex((e) => e.id === session.sessionId);
@@ -142,7 +162,7 @@ export async function loadSessionById(storage, idPrefix) {
   if (matches.length > 1) {
     const ids = matches.map((e) => e.id.slice(0, 8)).join(", ");
     throw new Error(
-      `Ambiguous prefix '${idPrefix}' matches multiple sessions: ${ids}. Use a longer prefix.`
+      `Ambiguous prefix '${idPrefix}' matches multiple sessions: ${ids}. Use a longer prefix.`,
     );
   }
 
@@ -155,7 +175,7 @@ export async function loadSessionById(storage, idPrefix) {
   // Update lastAccessedAt to make this the active session
   const now = new Date().toISOString();
   const updatedIndex = index.map((e) =>
-    e.id === entry.id ? { ...e, lastAccessedAt: now } : e
+    e.id === entry.id ? { ...e, lastAccessedAt: now } : e,
   );
   await storage.write(SESSION_INDEX_KEY, updatedIndex);
 
@@ -183,7 +203,7 @@ export async function listAllSessions(storage) {
         }
       }
       return { entry, workspaceExists };
-    })
+    }),
   );
 
   return results;
@@ -191,6 +211,8 @@ export async function listAllSessions(storage) {
 
 export async function startSession(args = []) {
   const debugMode = args.includes("--debug");
+  const providerIdx = args.indexOf("--provider");
+  const provider = providerIdx !== -1 && args[providerIdx + 1] ? args[providerIdx + 1] : "codex";
   const storage = defaultStorage();
 
   const rl = createPrompt();
@@ -208,16 +230,22 @@ export async function startSession(args = []) {
           console.log(`Language: ${chosen.language}`);
           console.log(`Workspace: ${chosen.workspaceDir}`);
           if (chosen.lessonFile) console.log(`Lesson: ${chosen.lessonFile}`);
-          console.log('Run "npm run session attempt" to test, or "npm run session show" to re-display.');
+          console.log(
+            'Run "npm run session attempt" to test, or "npm run session show" to re-display.',
+          );
         } else {
           // Session exists but exercise not set up yet — complete setup
-          console.log(`Completing setup for session: ${chosen.sessionId} (Node: ${chosen.nodeId})`);
+          console.log(
+            `Completing setup for session: ${chosen.sessionId} (Node: ${chosen.nodeId})`,
+          );
           const completed = await setupExercise(chosen, { debug: debugMode });
           if (!completed) return;
           await saveSession(storage, completed);
           console.log(`\nExercise ready: ${completed.exerciseId}`);
           console.log(`Workspace: ${completed.workspaceDir}`);
-          console.log('Run "npm run session attempt" to test, or "npm run session show" to re-display.');
+          console.log(
+            'Run "npm run session attempt" to test, or "npm run session show" to re-display.',
+          );
         }
         return;
       }
@@ -234,7 +262,12 @@ export async function startSession(args = []) {
     const customTopics = await loadCustomTopics(language);
 
     // Step 3: pick track/node (custom topics shown as a synthetic track entry)
-    const selected = await runGuidedNav(rl, filteredGraph, globalMastery, customTopics);
+    const selected = await runGuidedNav(
+      rl,
+      filteredGraph,
+      globalMastery,
+      customTopics,
+    );
 
     if (!selected) {
       console.log("No node selected. Session not started.");
@@ -244,7 +277,7 @@ export async function startSession(args = []) {
     // selected is either a nodeId string (curriculum) or a custom node object
     const isCustom = typeof selected === "object" && selected._custom;
     const nodeId = isCustom ? selected.id : selected;
-    const draft = createNewSession("guided", nodeId, globalMastery, language);
+    const draft = createNewSession("guided", nodeId, globalMastery, language, provider);
     if (isCustom) draft.customNode = selected;
 
     const session = await setupExercise(draft, { debug: debugMode });
@@ -254,10 +287,14 @@ export async function startSession(args = []) {
     }
     await saveSession(storage, session);
     console.log(`\nSession started: ${session.sessionId}`);
-    console.log(`Node: ${nodeId}  Language: ${language}  Exercise: ${session.exerciseId}`);
+    console.log(
+      `Node: ${nodeId}  Language: ${language}  Exercise: ${session.exerciseId}`,
+    );
     console.log(`Workspace: ${session.workspaceDir}`);
     if (session.lessonFile) console.log(`Lesson: ${session.lessonFile}`);
-    console.log('Edit the files above, then run "npm run session attempt" to test.');
+    console.log(
+      'Edit the files above, then run "npm run session attempt" to test.',
+    );
   } finally {
     rl.close();
   }
@@ -312,12 +349,8 @@ export async function listSessions() {
     return;
   }
 
-  console.log(
-    "\nID         Node       Language   Last Accessed"
-  );
-  console.log(
-    "---------- ---------- ---------- --------------"
-  );
+  console.log("\nID         Node       Language   Last Accessed");
+  console.log("---------- ---------- ---------- --------------");
   for (const { entry, workspaceExists } of sessions) {
     const shortId = (entry.id ?? "").slice(0, 8).padEnd(10);
     const node = (entry.nodeId ?? "?").padEnd(10);
@@ -342,10 +375,14 @@ export async function endSession(_args = []) {
   const recommendations = recommendNextNodes({
     graph,
     masteryState: session.masteryState,
-    misconceptionState: session.misconceptionState
+    misconceptionState: session.misconceptionState,
   });
 
-  const ended = { ...session, status: "ended", endedAt: new Date().toISOString() };
+  const ended = {
+    ...session,
+    status: "ended",
+    endedAt: new Date().toISOString(),
+  };
   await saveSession(storage, ended);
   await saveGlobalMastery(ended.masteryState);
 
@@ -362,19 +399,25 @@ export async function statusSession(_args = []) {
   }
 
   const dominantTags = computeDominantTags(session.misconceptionState);
-  console.log(JSON.stringify({
-    sessionId: session.sessionId,
-    status: session.status,
-    mode: session.mode,
-    nodeId: session.nodeId,
-    exerciseId: session.exerciseId ?? null,
-    workspaceDir: session.workspaceDir ?? null,
-    attempts: session.attemptState?.attemptIndex ?? 0,
-    hintLevelUsed: session.attemptState?.hintLevelUsed ?? 0,
-    startedAt: session.startedAt,
-    endedAt: session.endedAt ?? null,
-    dominantTags
-  }, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        sessionId: session.sessionId,
+        status: session.status,
+        mode: session.mode,
+        nodeId: session.nodeId,
+        exerciseId: session.exerciseId ?? null,
+        workspaceDir: session.workspaceDir ?? null,
+        attempts: session.attemptState?.attemptIndex ?? 0,
+        hintLevelUsed: session.attemptState?.hintLevelUsed ?? 0,
+        startedAt: session.startedAt,
+        endedAt: session.endedAt ?? null,
+        dominantTags,
+      },
+      null,
+      2,
+    ),
+  );
 }
 
 export async function showSession(_args = []) {
@@ -413,10 +456,18 @@ export async function debugSession(args = []) {
   if (!stage || !validStages.includes(stage)) {
     console.error(`Usage: session debug <stage>`);
     console.error(`  Stages: ${validStages.join(" | ")}`);
-    console.error(`  scaffold  — run scaffold stage for the current session node, print JSON result`);
-    console.error(`  starter   — run scaffold + one starter-expand iteration, print JSON result`);
-    console.error(`  test      — run scaffold + one test-expand iteration, print JSON result`);
-    console.error(`  lesson    — run scaffold + one lesson-expand iteration, print JSON result`);
+    console.error(
+      `  scaffold  — run scaffold stage for the current session node, print JSON result`,
+    );
+    console.error(
+      `  starter   — run scaffold + one starter-expand iteration, print JSON result`,
+    );
+    console.error(
+      `  test      — run scaffold + one test-expand iteration, print JSON result`,
+    );
+    console.error(
+      `  lesson    — run scaffold + one lesson-expand iteration, print JSON result`,
+    );
     process.exitCode = 1;
     return;
   }
@@ -425,7 +476,9 @@ export async function debugSession(args = []) {
   const session = await loadSession(storage);
 
   if (!session) {
-    console.error("No active session. Run 'npm run session start' first to select a node.");
+    console.error(
+      "No active session. Run 'npm run session start' first to select a node.",
+    );
     process.exitCode = 1;
     return;
   }
@@ -450,7 +503,7 @@ export async function attemptSession(_args = []) {
   }
 }
 
-export async function hintSession(_args = []) {
+export async function hintSession(args = []) {
   const storage = defaultStorage();
   const session = await loadSession(storage);
 
@@ -460,7 +513,14 @@ export async function hintSession(_args = []) {
     return;
   }
 
-  const updated = await requestHint(session);
+  // Parse optional --message "..." flag
+  let userMessage = null;
+  const msgIdx = args.indexOf("--message");
+  if (msgIdx !== -1 && args[msgIdx + 1]) {
+    userMessage = args[msgIdx + 1];
+  }
+
+  const updated = await requestHint(session, { userMessage });
   if (updated) {
     await saveSession(storage, updated);
   }

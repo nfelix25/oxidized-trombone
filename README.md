@@ -1,6 +1,6 @@
 # oxidized-trombone
 
-A personal interactive learning environment for systems programming and JS runtime internals, powered by Codex. Select a topic, get a personalized lesson and coding exercise, submit attempts, and receive progressive hints and AI-reviewed feedback — all from the terminal.
+A personal interactive learning environment for systems programming and JS runtime internals, powered by Codex. Select a topic, get a personalized lesson and coding exercise, submit attempts, and receive progressive hints and AI-reviewed feedback — from the terminal or a local web UI.
 
 **Supported languages:** Rust · C · C++ · Python · Zig
 
@@ -118,6 +118,32 @@ Mastery is tracked per-node at three depth levels (D1 surface → D3 fluent) and
   progress/           global_mastery.json
   audit/              failures.jsonl (schema/policy rejection log)
 ```
+
+## Web frontend
+
+A local web UI is available as an alternative to the CLI — same sessions, same state.
+
+**Start the API server:**
+```bash
+npm run serve        # production (serves client/dist/ statically)
+npm run dev:server   # development (hot-reload server via node --watch)
+```
+
+**Start the Vite dev client (in a second terminal):**
+```bash
+cd client
+npm run dev
+# → opens http://localhost:5173, proxies /api to localhost:3001
+```
+
+**Build the client for static serving:**
+```bash
+cd client
+npm run build
+# → output in client/dist/, served automatically by npm run serve
+```
+
+The UI provides: session list, guided node selector, real-time setup progress (SSE), Monaco editor with debounced auto-save, collapsible lesson pane, streaming test output, reviewer feedback, and coach panel with free-form questions.
 
 ## Development
 

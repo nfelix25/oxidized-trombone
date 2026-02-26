@@ -1,0 +1,13 @@
+{
+  "schemaName": "lesson_section_v1",
+  "packet": {},
+  "payload": {
+    "schema_version": "lesson_section_v1",
+    "role": "lesson-expand",
+    "section_id": "ls_invalid_no_title",
+    "type": "concept",
+    "content": "This section is missing the required section_title field — should fail SCHEMA_VALIDATION_FAILED",
+    "is_complete": false,
+    "next_focus": "n/a"
+  }
+}

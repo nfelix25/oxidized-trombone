@@ -2,6 +2,7 @@
   "schema_version": "lesson_section_v1",
   "role": "lesson-expand",
   "section_id": "ls_c200_d2_s1",
+  "section_title": "Core Concept",
   "type": "concept",
   "content": "## Pointer Arithmetic and Array Decay\n\nIn C, a pointer to a type `T` advances by `sizeof(T)` bytes when incremented. This means `p++` on an `int *` moves 4 bytes (on most platforms), not 1. This lets you traverse arrays naturally:\n\n```c\nint arr[] = {10, 20, 30, 40, 50};\nint sum = 0;\nfor (const int *p = arr; p < arr + 5; p++) {\n    sum += *p;\n}\n/* sum == 110 */\n```\n\nNotice `arr` is used directly as a pointer — this is **array decay**. When you pass an array to a function or assign it to a pointer variable, the array name *decays* to a pointer to its first element:\n\n```c\nvoid print_first(int *p) { printf(\"%d\\n\", *p); }\n\nint arr[] = {1, 2, 3};\nprint_first(arr);   /* arr decays to &arr[0] */\n```\n\nDecay loses size information: inside `print_first`, there is no way to recover the length of `arr`. This is why C APIs take an explicit `size_t len` parameter alongside the pointer.\n\n**Key rule**: Pointer arithmetic is only defined within (or one-past-the-end of) an array object. Dereferencing the one-past-the-end pointer, or performing arithmetic that goes further, is **undefined behaviour**.\n",
   "is_complete": false,

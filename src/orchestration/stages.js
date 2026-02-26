@@ -2,6 +2,8 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { runCodexExec } from "./codexExec.js";
+import { runClaudeExec } from "./claudeExec.js";
+import { extractJson } from "./extractJson.js";
 import { validateRoleOutput } from "../validation/schemaValidator.js";
 import { evaluatePolicy, toRejectionResult } from "../policy/engine.js";
 import { getLanguageConfig } from "../config/languages.js";
@@ -47,20 +49,40 @@ export async function runStage(stage, packet, options = {}) {
     return validateStagePayload(schemaName, options.fallbackPayload, packet);
   }
 
+  const provider = options.provider ?? "codex";
   const resolvedSchemaPath = options.schemaPath ?? schemaPathFor(schemaName);
   const langInstructions = getLanguageConfig(options.language ?? "rust").stageInstructions;
   const instruction = langInstructions[stage] ?? "Generate a JSON object for the following context. Output ONLY the JSON object.\n\nContext packet:";
-  const prompt = options.prompt ?? `${instruction}\n\n${JSON.stringify(packet, null, 2)}`;
-  const result = await runCodexExec({
-    prompt,
-    schemaPath: resolvedSchemaPath,
-    outputPath: options.outputPath,
-    cwd: options.cwd,
-    model: options.model,
-    sandbox: options.sandbox,
-    approval: options.approval,
-    command: options.command
-  });
+
+  let prompt;
+  if (options.prompt) {
+    prompt = options.prompt;
+  } else if (provider === "claude") {
+    const schemaJson = readFileSync(resolvedSchemaPath, "utf8");
+    prompt = `You must output ONLY a raw JSON object with no markdown fences, no explanation, and no extra text. The JSON must strictly conform to this schema (all required fields present, no additional properties):\n\n${schemaJson}\n\n${instruction}\n\n${JSON.stringify(packet, null, 2)}`;
+  } else {
+    prompt = `${instruction}\n\n${JSON.stringify(packet, null, 2)}`;
+  }
+
+  let result;
+  if (provider === "claude") {
+    result = await runClaudeExec({
+      prompt,
+      model: options.model ?? "claude-sonnet-4-6",
+      command: options.command
+    });
+  } else {
+    result = await runCodexExec({
+      prompt,
+      schemaPath: resolvedSchemaPath,
+      outputPath: options.outputPath,
+      cwd: options.cwd,
+      model: options.model,
+      sandbox: options.sandbox,
+      approval: options.approval,
+      command: options.command
+    });
+  }
 
   if (result.code !== 0) {
     return {
@@ -73,7 +95,9 @@ export async function runStage(stage, packet, options = {}) {
 
   let payload;
   try {
-    if (options.outputPath) {
+    if (provider === "claude") {
+      payload = JSON.parse(extractJson(result.stdout));
+    } else if (options.outputPath) {
       payload = JSON.parse(readFileSync(options.outputPath, "utf8"));
     } else {
       payload = JSON.parse(result.stdout.trim());

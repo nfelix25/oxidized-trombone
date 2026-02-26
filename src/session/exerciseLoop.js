@@ -16,6 +16,10 @@ function resolveNode(session) {
   return getNode(allCurricula, session.nodeId);
 }
 
+function stageOpts(session, extra = {}) {
+  return { provider: session.provider ?? "codex", ...extra };
+}
+
 const MAX_ITERATIONS = {
   D1: { starter: 6, test: 8, lesson: 12 },
   D2: { starter: 8, test: 10, lesson: 15 },
@@ -104,28 +108,49 @@ export async function runExpandLoop(loopType, scaffold, priorSections, session, 
 
   while (sections.length < max) {
     const iteration = sections.length + 1;
-    process.stdout.write(`  [${loopType} ${iteration}/${max}] running…`);
+    if (options.onEvent) {
+      options.onEvent({ stage: loopType, iteration, of: max, status: "running" });
+    } else {
+      process.stdout.write(`  [${loopType} ${iteration}/${max}] running…`);
+    }
     const packet = buildExpandPacket(loopType, scaffold, priorSections, sections, nextFocus, session, node);
     if (debugLog) await debugLog.write(`${loopType}-expand-${iteration}-in`, packet);
     const result = await runStage(loopType + "-expand", packet, options[loopType] ?? {});
     if (debugLog) await debugLog.write(`${loopType}-expand-${iteration}-out`, result);
     if (!result.accepted) {
-      process.stdout.write(" FAILED\n");
+      if (options.onEvent) {
+        options.onEvent({ stage: loopType, iteration, of: max, status: "failed" });
+      } else {
+        process.stdout.write(" FAILED\n");
+      }
       printStageError(loopType + "-expand", result);
       return null;
     }
     sections.push(result.payload);
     if (result.payload.is_complete) {
-      process.stdout.write(" ✓ complete\n");
+      if (options.onEvent) {
+        options.onEvent({ stage: loopType, iteration, of: max, status: "done" });
+      } else {
+        process.stdout.write(" ✓ complete\n");
+      }
       break;
     }
-    const focus = result.payload.next_focus ? ` → "${result.payload.next_focus}"` : "";
-    process.stdout.write(` ✓${focus}\n`);
-    nextFocus = result.payload.next_focus ?? null;
+    const nextFocusVal = result.payload.next_focus ?? null;
+    if (options.onEvent) {
+      options.onEvent({ stage: loopType, iteration, of: max, status: "section_done", next_focus: nextFocusVal });
+    } else {
+      const focus = nextFocusVal ? ` → "${nextFocusVal}"` : "";
+      process.stdout.write(` ✓${focus}\n`);
+    }
+    nextFocus = nextFocusVal;
   }
 
   if (sections.length > 0 && !sections[sections.length - 1].is_complete) {
-    console.log(`  [${loopType}] cap reached (${max} sections)`);
+    if (options.onEvent) {
+      options.onEvent({ stage: loopType, of: max, status: "capped" });
+    } else {
+      console.log(`  [${loopType}] cap reached (${max} sections)`);
+    }
   }
 
   return sections;
@@ -148,12 +173,16 @@ export async function setupExercise(session, options = {}) {
   const createWs = options.createWorkspaceFn ?? createWorkspace;
   const language = session.language ?? "rust";
 
-  // Build expand loop option maps from flat options, injecting language
-  const starterLoopOpts = { starter: { language, ...options.starterOptions ?? {} } };
-  const testLoopOpts = { test: { language, ...options.testOptions ?? {} } };
-  const lessonLoopOpts = { lesson: { language, ...options.lessonOptions ?? {} } };
+  // Build expand loop option maps from flat options, injecting language, provider and onEvent
+  const starterLoopOpts = { starter: stageOpts(session, { language, ...options.starterOptions ?? {} }), onEvent: options.onEvent };
+  const testLoopOpts = { test: stageOpts(session, { language, ...options.testOptions ?? {} }), onEvent: options.onEvent };
+  const lessonLoopOpts = { lesson: stageOpts(session, { language, ...options.lessonOptions ?? {} }), onEvent: options.onEvent };
 
-  console.log(`Setting up exercise… (node: ${node.id}, depth: ${node.depthTarget ?? "D2"})`);
+  if (options.onEvent) {
+    options.onEvent({ stage: "setup", status: "started", nodeId: node.id, depth: node.depthTarget ?? "D2" });
+  } else {
+    console.log(`Setting up exercise… (node: ${node.id}, depth: ${node.depthTarget ?? "D2"})`);
+  }
 
   // In debug mode, create workspace early so we have a dir for the debug log
   let ws = null;
@@ -164,54 +193,74 @@ export async function setupExercise(session, options = {}) {
   }
 
   // Scaffold stage
-  process.stdout.write("  [scaffold] running…");
+  if (options.onEvent) {
+    options.onEvent({ stage: "scaffold", status: "running" });
+  } else {
+    process.stdout.write("  [scaffold] running…");
+  }
   const scaffoldPacket = buildScaffoldPacket(session, node);
   if (debugLog) await debugLog.write("scaffold-in", scaffoldPacket);
-  const scaffoldResult = await runScaffoldStage(scaffoldPacket, { language, ...options.scaffoldOptions ?? {} });
+  const scaffoldResult = await runScaffoldStage(scaffoldPacket, stageOpts(session, { language, ...options.scaffoldOptions ?? {} }));
   if (debugLog) await debugLog.write("scaffold-out", scaffoldResult);
   if (!scaffoldResult.accepted) {
-    process.stdout.write(" FAILED\n");
+    if (options.onEvent) {
+      options.onEvent({ stage: "scaffold", status: "failed" });
+    } else {
+      process.stdout.write(" FAILED\n");
+    }
     printStageError("scaffold", scaffoldResult);
     process.exitCode = 1;
     return null;
   }
   const scaffold = scaffoldResult.payload;
-  console.log(` ✓ ${scaffold.scaffold_id}`);
+  if (options.onEvent) {
+    options.onEvent({ stage: "scaffold", status: "done", scaffoldId: scaffold.scaffold_id });
+  } else {
+    console.log(` ✓ ${scaffold.scaffold_id}`);
+  }
 
   // Starter expand loop
-  console.log("  [starter loop]");
+  if (!options.onEvent) console.log("  [starter loop]");
   const starterSections = await runExpandLoop("starter", scaffold, [], session, node, starterLoopOpts, debugLog);
   if (!starterSections) {
     process.exitCode = 1;
     return null;
   }
-  console.log(`  [starter] done (${starterSections.length} sections)`);
+  if (!options.onEvent) console.log(`  [starter] done (${starterSections.length} sections)`);
 
   // Test expand loop (receives starter sections as prior context)
-  console.log("  [test loop]");
+  if (!options.onEvent) console.log("  [test loop]");
   const testSections = await runExpandLoop("test", scaffold, starterSections, session, node, testLoopOpts, debugLog);
   if (!testSections) {
     process.exitCode = 1;
     return null;
   }
-  console.log(`  [test] done (${testSections.length} sections)`);
+  if (!options.onEvent) console.log(`  [test] done (${testSections.length} sections)`);
 
   // Lesson expand loop (receives starter + test sections as prior context)
-  console.log("  [lesson loop]");
+  if (!options.onEvent) console.log("  [lesson loop]");
   const lessonSections = await runExpandLoop("lesson", scaffold, [...starterSections, ...testSections], session, node, lessonLoopOpts, debugLog);
   if (!lessonSections) {
     process.exitCode = 1;
     return null;
   }
-  console.log(`  [lesson] done (${lessonSections.length} sections)`);
+  if (!options.onEvent) console.log(`  [lesson] done (${lessonSections.length} sections)`);
 
   // Create workspace and assemble files (reuse early-created ws if debug mode)
-  process.stdout.write("  Writing workspace…");
+  if (options.onEvent) {
+    options.onEvent({ stage: "workspace", status: "writing" });
+  } else {
+    process.stdout.write("  Writing workspace…");
+  }
   if (!ws) ws = await createWs(session.sessionId, session.nodeId, language);
   await assembleStarterFiles(ws.dir, starterSections, language);
   await assembleTestFiles(ws.dir, testSections, language);
   const lessonFile = await assembleLessonFile(ws.dir, lessonSections);
-  console.log(" ✓");
+  if (options.onEvent) {
+    options.onEvent({ stage: "workspace", status: "done", workspaceDir: ws.dir });
+  } else {
+    console.log(" ✓");
+  }
 
   const exerciseId = scaffold.scaffold_id;
 
@@ -244,13 +293,21 @@ export async function runAttempt(session, options = {}) {
   const execExercise = options.exerciseRunner ?? runExercise;
   const language = session.language ?? "rust";
 
-  console.log("Running cargo test…");
+  if (options.onEvent) {
+    options.onEvent({ stage: "test-running" });
+  } else {
+    console.log("Running cargo test…");
+  }
   const runResult = await execExercise(session.workspaceDir, language);
 
-  const passLabel = runResult.ok ? "PASS" : "FAIL";
-  console.log(`\nTest result: ${passLabel} (exit ${runResult.exitCode})`);
-  if (runResult.stdout) process.stdout.write(runResult.stdout);
-  if (runResult.stderr) process.stdout.write(runResult.stderr);
+  if (options.onEvent) {
+    options.onEvent({ stage: "test-done", ok: runResult.ok, exitCode: runResult.exitCode, stdout: runResult.stdout ?? "", stderr: runResult.stderr ?? "" });
+  } else {
+    const passLabel = runResult.ok ? "PASS" : "FAIL";
+    console.log(`\nTest result: ${passLabel} (exit ${runResult.exitCode})`);
+    if (runResult.stdout) process.stdout.write(runResult.stdout);
+    if (runResult.stderr) process.stdout.write(runResult.stderr);
+  }
 
   // Record attempt
   const updatedAttemptState = recordAttempt(session.attemptState, runResult, 0);
@@ -258,7 +315,7 @@ export async function runAttempt(session, options = {}) {
 
   // Reviewer stage
   const reviewerPacket = buildReviewerPacket(sessionWithAttempt, node, runResult);
-  const reviewerResult = await runReviewerStage(reviewerPacket, { language, ...options.reviewerOptions ?? {} });
+  const reviewerResult = await runReviewerStage(reviewerPacket, stageOpts(session, { language, ...options.reviewerOptions ?? {} }));
 
   if (!reviewerResult.accepted) {
     // Preserve attempt record, surface reviewer failure
@@ -268,9 +325,13 @@ export async function runAttempt(session, options = {}) {
   }
 
   const reviewPayload = reviewerResult.payload;
-  console.log(`\nReviewer: ${reviewPayload.pass_fail} (score: ${reviewPayload.score})`);
-  if (reviewPayload.remediation?.reason) {
-    console.log(`Feedback: ${reviewPayload.remediation.reason}`);
+  if (options.onEvent) {
+    options.onEvent({ stage: "reviewer-done", passFail: reviewPayload.pass_fail, score: reviewPayload.score, remediation: reviewPayload.remediation ?? null });
+  } else {
+    console.log(`\nReviewer: ${reviewPayload.pass_fail} (score: ${reviewPayload.score})`);
+    if (reviewPayload.remediation?.reason) {
+      console.log(`Feedback: ${reviewPayload.remediation.reason}`);
+    }
   }
 
   const finalAttemptState = recordReviewOutcome(updatedAttemptState, reviewPayload);
@@ -311,8 +372,9 @@ export async function requestHint(session, options = {}) {
 
   const nextLevel = currentLevel + 1;
   const latestRun = getLatestRunResult(session.attemptState);
-  const coachPacket = buildCoachPacket(session, node, nextLevel, latestRun);
-  const coachResult = await runCoachStage(coachPacket, options.coachOptions ?? {});
+  const coachPacket = buildCoachPacket(session, node, nextLevel, latestRun, options.userMessage ?? null);
+  const language = session.language ?? "rust";
+  const coachResult = await runCoachStage(coachPacket, stageOpts(session, { language, ...options.coachOptions ?? {} }));
 
   if (!coachResult.accepted) {
     printStageError("coach", coachResult);
@@ -407,20 +469,22 @@ function buildReviewerPacket(session, node, runResult) {
   });
 }
 
-function buildCoachPacket(session, node, hintLevel, runResult) {
+function buildCoachPacket(session, node, hintLevel, runResult, userMessage = null) {
   const evidence = runResult ? extractAttemptEvidence(runResult) : null;
   const attemptState = session.attemptState;
+  const attemptContext = {
+    attempt_index: attemptState?.attemptIndex ?? 0,
+    exercise_id: session.exerciseId,
+    hint_level: hintLevel
+  };
+  if (userMessage) attemptContext.user_message = userMessage;
   return buildContextPacket({
     role: "coach",
     taskType: "hint_request",
     learnerProfile: { masteryLevel: session.masteryState.byNode[node.id] ?? 0 },
     curriculumContext: { node_id: node.id, depth_target: node.depthTarget },
     misconceptionContext: { top_tags: topMisconceptionTags(session.misconceptionState) },
-    attemptContext: {
-      attempt_index: attemptState?.attemptIndex ?? 0,
-      exercise_id: session.exerciseId,
-      hint_level: hintLevel
-    },
+    attemptContext,
     evidenceContext: evidence,
     policyContext: { allow_reveal: false }
   });

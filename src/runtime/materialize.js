@@ -51,7 +51,10 @@ export async function assembleTestFiles(workspaceDir, testSections, language = "
 }
 
 export async function assembleLessonFile(workspaceDir, lessonSections) {
-  const content = lessonSections.map((s) => s.content).join("\n\n");
+  const content = lessonSections.map((s) => {
+    const heading = s.section_title ? `## ${s.section_title}\n\n` : "";
+    return `${heading}${s.content}`;
+  }).join("\n\n");
   const outPath = path.join(workspaceDir, "LESSON.md");
   await fs.mkdir(workspaceDir, { recursive: true });
   await fs.writeFile(outPath, content);
