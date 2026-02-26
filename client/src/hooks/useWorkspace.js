@@ -42,7 +42,8 @@ export function useWorkspace(sessionId) {
   // Debounced auto-save
   const handleChange = useCallback(
     (newContent) => {
-      setContent(newContent);
+      // Comenting out to workaround editor reloading content every keystroke. But, leaving the code in case there are unintended side effects.
+      // setContent(newContent);
       setSaveState("dirty");
       clearTimeout(saveTimerRef.current);
       saveTimerRef.current = setTimeout(async () => {
